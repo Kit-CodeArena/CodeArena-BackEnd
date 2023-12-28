@@ -54,6 +54,6 @@ public class UserController {
     public ResponseEntity<?> getUserInfo(@PathVariable String email) {
         // 사용자 정보 조회
         Optional<User> user = userService.getUserInfo(email);
-        return user.map(u -> ResponseEntity.ok(new UserDto(u.getUsername(), u.getEmail()))).orElse(ResponseEntity.notFound().build());
+        return user.map(u -> ResponseEntity.ok(new UserDto(u.getUsername(), u.getNickname(), u.getEmail()))).orElse(ResponseEntity.notFound().build());
     }
 }

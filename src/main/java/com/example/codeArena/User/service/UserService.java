@@ -31,7 +31,7 @@ public class UserService {
         }
 
         String encodedPassword = passwordEncoder.encode(registerDto.getPassword());
-        User newUser = new User(registerDto.getUsername(), registerDto.getEmail(), encodedPassword);
+        User newUser = new User(registerDto.getUsername(), registerDto.getNickname(), registerDto.getEmail(), encodedPassword);
         return userRepository.save(newUser);
     }
 
