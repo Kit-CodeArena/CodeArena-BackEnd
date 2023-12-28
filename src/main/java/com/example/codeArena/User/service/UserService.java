@@ -4,6 +4,7 @@ import com.example.codeArena.User.dto.RegisterDto;
 import com.example.codeArena.User.exception.CustomException;
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
+import com.example.codeArena.User.util.JwtTokenProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,13 @@ public class UserService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtTokenProvider tokenProvider; // JwtTokenProvider 추가
 
     @Autowired
-    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder) {
+    public UserService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtTokenProvider tokenProvider) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.tokenProvider = tokenProvider; // 주입
     }
 
     public User registerUser(RegisterDto registerDto) {
@@ -32,9 +35,10 @@ public class UserService {
         return userRepository.save(newUser);
     }
 
-    public Optional<User> loginUser(String email, String password) {
+    public Optional<String> loginUser(String email, String password) {
         return userRepository.findByEmail(email)
-                .filter(user -> passwordEncoder.matches(password, user.getPassword()));
+                .filter(user -> passwordEncoder.matches(password, user.getPassword()))
+                .map(user -> tokenProvider.generateToken(user.getUsername())); // JWT 토큰 생성 및 반환
     }
 
     public Optional<User> getUserInfo(String email) {
