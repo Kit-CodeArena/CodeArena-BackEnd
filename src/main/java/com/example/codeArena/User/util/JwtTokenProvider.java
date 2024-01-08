@@ -1,5 +1,6 @@
 package com.example.codeArena.User.util;
 
+import com.example.codeArena.User.model.User;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -22,18 +23,24 @@ public class JwtTokenProvider {
     private int jwtExpirationInMs;
 
     // JWT 토큰 생성
-    public String generateToken(String username) {
+    public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
         SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
+        // JWT 클레임 생성
+        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        claims.put("role", user.getRole()); // 사용자 역할을 클레임에 추가
+
+        // JWT 토큰 생성
         return Jwts.builder()
-                .setSubject(username)
+                .setClaims(claims)
                 .setIssuedAt(now)
                 .setExpiration(expiryDate)
                 .signWith(key, SignatureAlgorithm.HS512)
                 .compact();
     }
+
 
     // JWT 토큰에서 사용자 이름 가져오기
     public String getUsernameFromJWT(String token) {

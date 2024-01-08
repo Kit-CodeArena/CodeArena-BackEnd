@@ -38,8 +38,10 @@ public class UserService {
     public Optional<String> loginUser(String email, String password) {
         return userRepository.findByEmail(email)
                 .filter(user -> passwordEncoder.matches(password, user.getPassword()))
-                .map(user -> tokenProvider.generateToken(user.getUsername())); // JWT 토큰 생성 및 반환
+                .map(tokenProvider::generateToken);
     }
+
+
 
     public Optional<User> getUserInfo(String email) {
         return userRepository.findByEmail(email);

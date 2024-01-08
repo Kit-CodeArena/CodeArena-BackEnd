@@ -1,0 +1,17 @@
+server:
+  port: 8080
+
+spring:
+  data:
+    mongodb:
+      uri: mongodb+srv://pakyoong:2527@myCluster.tz9wcyr.mongodb.net/myCluster?retryWrites=true&w=majority
+
+logging:
+  level:
+    root: INFO
+    org.springframework.web: DEBUG
+
+jwt:
+  secret: "5SA245Datj34wgd3sgn3sdwiuhnvksdlvmsl#45lskdfjLKFDJG$#%jsldkjflsdkfj39rLSDFLJr93r@lskdfj"
+  expiration:
+    ms: 888888

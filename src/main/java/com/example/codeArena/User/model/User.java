@@ -14,10 +14,11 @@ public class User {
     @Id
     private String id;
 
-    private String username;
-    private String nickname;
-    private String email;
-    private String password;
+    private String username; // 사용자 이름
+    private String nickname; // 닉네임
+    private String email; // 이메일
+    private String password; // 비밀번호
+    private String role; // 권한
 
     public User(String username, String nickname, String email, String password) {
         this.username = username;

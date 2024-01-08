@@ -1,4 +1,4 @@
-package com.example.codeArena.User.Config;
+package com.example.codeArena.User.config;
 
 import com.example.codeArena.User.jwt.JwtAuthenticationFilter;
 import org.springframework.beans.factory.annotation.Autowired;

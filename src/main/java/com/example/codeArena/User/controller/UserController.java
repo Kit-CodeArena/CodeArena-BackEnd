@@ -1,4 +1,4 @@
-package com.example.codeArena.User.Controller;
+package com.example.codeArena.User.controller;
 
 import com.example.codeArena.User.dto.LoginDto;
 import com.example.codeArena.User.dto.RegisterDto;
@@ -31,10 +31,9 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@RequestBody @Valid RegisterDto registerDto) {
         User user = userService.registerUser(registerDto);
-        String token = tokenProvider.generateToken(user.getUsername());
+        String token = tokenProvider.generateToken(user); // 수정: User 객체 전달
         return ResponseEntity.ok(new TokenDto(token)); // 토큰만 반환
     }
-
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody @Valid LoginDto loginDto) {
         Optional<String> jwtToken = userService.loginUser(loginDto.getEmail(), loginDto.getPassword());
