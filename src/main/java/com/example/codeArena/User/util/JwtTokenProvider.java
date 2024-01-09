@@ -30,7 +30,7 @@ public class JwtTokenProvider {
 
         // JWT 클레임 생성
         Claims claims = Jwts.claims().setSubject(user.getUsername());
-        claims.put("role", user.getRole()); // 사용자 역할을 클레임에 추가
+        claims.put("role", "ROLE_" + user.getRole()); // "ROLE_" 접두사 추가
 
         // JWT 토큰 생성
         return Jwts.builder()

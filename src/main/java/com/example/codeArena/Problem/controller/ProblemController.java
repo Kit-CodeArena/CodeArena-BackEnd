@@ -19,7 +19,7 @@ public class ProblemController {
     private ProblemService problemService;
 
     // 문제 생성
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ResponseEntity<ProblemDto> createProblem(@RequestBody ProblemCreateDto createDto) {
         ProblemDto createdProblem = problemService.createProblem(createDto);
@@ -42,7 +42,7 @@ public class ProblemController {
     }
 
     // 문제 수정
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<ProblemDto> updateProblem(@PathVariable String id,
                                                     @RequestBody ProblemUpdateDto updateDto) {
@@ -52,7 +52,7 @@ public class ProblemController {
     }
 
     // 문제 삭제
-    @PreAuthorize("hasAuthority('ADMIN')")
+    @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteProblem(@PathVariable String id) {
         problemService.deleteProblem(id);
