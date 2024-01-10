@@ -1,4 +1,4 @@
-package com.example.codeArena.chatting.dto;
+package com.example.codeArena.chatting.domain;
 
 import lombok.Getter;
 import lombok.Setter;
