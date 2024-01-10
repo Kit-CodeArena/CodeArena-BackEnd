@@ -1,0 +1,18 @@
+package com.example.codeArena.Post.dto;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
+import java.util.Date;
+
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
+public class CommentResponseDto {
+    private String id; // 댓글 ID
+    private String postId; // 대상 게시글 ID
+    private String authorId; // 작성자 ID
+    private String content; // 내용
+    private Date createdAt; // 생성 날짜
+}

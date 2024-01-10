@@ -1,7 +1,7 @@
 package com.example.codeArena.User.service;
 
 import com.example.codeArena.User.dto.RegisterDto;
-import com.example.codeArena.User.exception.CustomException;
+import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.User.util.JwtTokenProvider;

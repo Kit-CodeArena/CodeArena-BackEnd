@@ -1,4 +1,4 @@
-package com.example.codeArena.User.exception;
+package com.example.codeArena.exception;
 
 import lombok.Getter;
 
