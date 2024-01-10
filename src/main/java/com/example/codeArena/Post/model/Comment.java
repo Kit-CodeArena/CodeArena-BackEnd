@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.util.Date;
 import java.util.List;
 
@@ -22,16 +23,6 @@ public class Comment {
     private Date createdAt; // 댓글 생성 날짜
     private Date updatedAt;  // 수정 시간
     private List<String> replies; // 대댓글 ID 목록 (자기 자신의 ID 목록)
-
-    public Comment(String postId, String authorId, String content) {
-        this.postId = postId;
-        this.authorId = authorId;
-        this.content = content;
-        this.createdAt = new Date();
-    }
-    public void setUpdatedAt(Date updatedAt) {
-        this.updatedAt = updatedAt;
-    }
 
     // 대댓글 추가 메소드
     public void addReply(String replyId) {

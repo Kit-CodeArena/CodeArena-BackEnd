@@ -5,6 +5,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -34,17 +36,10 @@ public class Post {
         this.authorId = authorId;
         this.tags = tags;
         this.createdAt = new Date();
-        this.updatedAt = new Date();
+        this.updatedAt = this.createdAt;
         this.likes = 0;
         this.views = 0;
-    }
-
-    // 게시글 업데이트 메소드
-    public void update(String title, String content, Set<String> tags) {
-        this.title = title;
-        this.content = content;
-        this.tags = tags;
-        this.updatedAt = new Date();
+        this.comments = new ArrayList<>();
     }
 
     // 이미지 추가 메소드

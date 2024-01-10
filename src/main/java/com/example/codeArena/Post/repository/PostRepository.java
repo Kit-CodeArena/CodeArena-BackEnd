@@ -16,6 +16,4 @@ public interface PostRepository extends MongoRepository<Post, String> {
 
     // 태그를 포함하는 게시글 찾기
     List<Post> findByTagsContaining(String tag);
-
-    // 기타 필요한 쿼리 메소드 추가...
 }

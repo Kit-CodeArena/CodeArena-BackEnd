@@ -5,9 +5,11 @@ import com.example.codeArena.Post.model.Comment;
 import com.example.codeArena.Post.service.CommentService;
 import com.example.codeArena.security.UserPrincipal;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -16,15 +18,18 @@ import java.util.List;
 @RequestMapping("/api/comments")
 public class CommentController {
 
-    @Autowired
-    private CommentService commentService;
+    private final CommentService commentService;
 
+    @Autowired
+    public CommentController(CommentService commentService) {
+        this.commentService = commentService;
+    }
     // 댓글 생성
     @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody CommentCreateDto commentDto,
                                                  @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!commentDto.getAuthorId().equals(currentUser.getId())) {
-            return ResponseEntity.status(403).body(null);  // Forbidden access
+        if (!currentUser.getId().equals(commentDto.getAuthorId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 생성 권한이 없습니다.");
         }
         Comment comment = commentService.createComment(commentDto);
         return ResponseEntity.ok(comment);
@@ -42,14 +47,8 @@ public class CommentController {
     public ResponseEntity<Comment> updateComment(@PathVariable String commentId,
                                                  @RequestBody String content,
                                                  @AuthenticationPrincipal UserPrincipal currentUser) {
-        Comment comment = commentService.getCommentById(commentId)
-                .orElse(null);
-
-        if (comment == null || !comment.getAuthorId().equals(currentUser.getId())) {
-            return ResponseEntity.status(403).body(null);  // Forbidden access
-        }
-
-        Comment updatedComment = commentService.updateComment(commentId, content);
+        Comment updatedComment = commentService.updateComment(commentId, content, currentUser.getId())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "댓글을 찾을 수 없습니다."));
         return ResponseEntity.ok(updatedComment);
     }
 
@@ -57,16 +56,20 @@ public class CommentController {
     @DeleteMapping("/{commentId}")
     public ResponseEntity<Void> deleteComment(@PathVariable String commentId,
                                               @AuthenticationPrincipal UserPrincipal currentUser) {
-        Comment comment = commentService.getCommentById(commentId)
-                .orElse(null);
-
-        if (comment == null || !comment.getAuthorId().equals(currentUser.getId())) {
-            return ResponseEntity.status(403).body(null);  // Forbidden access
-        }
-
-        commentService.deleteComment(commentId);
+        commentService.deleteComment(commentId, currentUser.getId());
         return ResponseEntity.ok().build();
     }
 
-    // 기타 필요한 엔드포인트 추가...
+    // 대댓글 추가
+    @PostMapping("/{commentId}/replies")
+    public ResponseEntity<Comment> addReplyToComment(@PathVariable String commentId,
+                                                     @RequestBody CommentCreateDto replyDto,
+                                                     @AuthenticationPrincipal UserPrincipal currentUser) {
+        if (!currentUser.getId().equals(replyDto.getAuthorId())) {
+            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "대댓글 생성 권한이 없습니다.");
+        }
+        Comment replyComment = commentService.createComment(replyDto);
+        Comment updatedComment = commentService.addReplyToComment(commentId, replyComment.getId());
+        return ResponseEntity.ok(updatedComment);
+    }
 }
