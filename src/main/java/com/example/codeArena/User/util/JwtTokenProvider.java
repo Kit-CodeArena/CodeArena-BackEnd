@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
+import jakarta.annotation.PostConstruct;
 import javax.crypto.SecretKey;
 import java.util.Date;
 
@@ -15,22 +16,32 @@ import java.util.Date;
 public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+    private static final String ROLE_PREFIX = "ROLE_";
 
-    @Value("${jwt.secret}")
-    private String jwtSecret;
+    private final String jwtSecret;
+    private final int jwtExpirationInMs;
+    private SecretKey key;
 
-    @Value("${jwt.expiration.ms}")
-    private int jwtExpirationInMs;
+    // SecretKey와 기타 초기화 작업을 위한 PostConstruct 메소드
+    @PostConstruct
+    public void init() {
+        this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
+    }
+
+    public JwtTokenProvider(@Value("${jwt.secret}") String jwtSecret,
+                            @Value("${jwt.expiration.ms}") int jwtExpirationInMs) {
+        this.jwtSecret = jwtSecret;
+        this.jwtExpirationInMs = jwtExpirationInMs;
+    }
 
     // JWT 토큰 생성
     public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
 
         // JWT 클레임 생성
         Claims claims = Jwts.claims().setSubject(user.getUsername());
-        claims.put("role", "ROLE_" + user.getRole()); // "ROLE_" 접두사 추가
+        claims.put("role", ROLE_PREFIX + user.getRole());
 
         // JWT 토큰 생성
         return Jwts.builder()
@@ -41,11 +52,8 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-
     // JWT 토큰에서 사용자 이름 가져오기
     public String getUsernameFromJWT(String token) {
-        SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
-
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
@@ -58,22 +66,13 @@ public class JwtTokenProvider {
     // JWT 토큰 유효성 검증
     public boolean validateToken(String authToken) {
         try {
-            SecretKey key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
             Jwts.parserBuilder()
                     .setSigningKey(key)
                     .build()
                     .parseClaimsJws(authToken);
             return true;
-        } catch (io.jsonwebtoken.security.SignatureException ex) {
-            logger.info("잘못된 JWT 서명입니다: {}", ex.getMessage());
-        } catch (MalformedJwtException ex) {
-            logger.info("잘못된 JWT 구조입니다: {}", ex.getMessage());
-        } catch (ExpiredJwtException ex) {
-            logger.info("만료된 JWT 토큰입니다: {}", ex.getMessage());
-        } catch (UnsupportedJwtException ex) {
-            logger.info("지원되지 않는 JWT 토큰입니다: {}", ex.getMessage());
-        } catch (IllegalArgumentException ex) {
-            logger.info("JWT 토큰이 비었습니다: {}", ex.getMessage());
+        } catch (JwtException ex) {
+            logger.error("JWT 토큰 유효성 검증 실패: {}", ex.getMessage());
         }
         return false;
     }

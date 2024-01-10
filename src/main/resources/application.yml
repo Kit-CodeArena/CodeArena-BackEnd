@@ -14,4 +14,4 @@ logging:
 jwt:
   secret: "5SA245Datj34wgd3sgn3sdwiuhnvksdlvmsl#45lskdfjLKFDJG$#%jsldkjflsdkfj39rLSDFLJr93r@lskdfj"
   expiration:
-    ms: 86400
+    ms: 86400000
