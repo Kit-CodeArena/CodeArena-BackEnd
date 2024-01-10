@@ -22,6 +22,7 @@ public class Post {
     private String title; // 제목
     private String content; // 내용
     private String authorId; // 작성자 ID (User 모델의 ID와 연결)
+    private String authorNickname; // 작성자 닉네임
     private Date createdAt; // 생성 날짜
     private Date updatedAt; // 수정 날짜
     private Set<String> tags; // 태그 세트
@@ -30,10 +31,11 @@ public class Post {
     private List<String> comments; // 댓글 ID 목록 (Comment 모델의 ID와 연결)
     private byte[] image; // 이미지 데이터
 
-    public Post(String title, String content, String authorId, Set<String> tags) {
+    public Post(String title, String content, String authorId, String authorNickname, Set<String> tags) {
         this.title = title;
         this.content = content;
         this.authorId = authorId;
+        this.authorNickname = authorNickname;
         this.tags = tags;
         this.createdAt = new Date();
         this.updatedAt = this.createdAt;

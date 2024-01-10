@@ -1,7 +1,8 @@
 package com.example.codeArena.User.jwt;
 
 import com.example.codeArena.User.util.JwtTokenProvider;
-import lombok.NonNull;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,14 +15,13 @@ import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-
 import java.io.IOException;
 
 @Component
 public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
+    private static final Logger logger = LoggerFactory.getLogger(JwtAuthenticationFilter.class);
     private final JwtTokenProvider tokenProvider;
-
     private final UserDetailsService userDetailsService;
 
     @Autowired
@@ -31,28 +31,31 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     }
 
     @Override
-    protected void doFilterInternal(@NonNull HttpServletRequest request,
-                                    @NonNull HttpServletResponse response,
-                                    @NonNull FilterChain filterChain)
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
+        String jwt = getJwtFromRequest(request);
         try {
-            String jwt = getJwtFromRequest(request);
             if (jwt != null && tokenProvider.validateToken(jwt)) {
                 String username = tokenProvider.getUsernameFromJWT(jwt);
                 UserDetails userDetails = userDetailsService.loadUserByUsername(username);
                 UsernamePasswordAuthenticationToken authentication =
                         new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
                 authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
+                // 로깅 추가
+                logger.info("Security Context에 설정된 Authentication 객체: {}", authentication);
             }
         } catch (Exception ex) {
-            logger.error("사용자 인증 정보를 보안 컨텍스트에 설정할 수 없음: {}");
+            logger.error("Could not set user authentication in security context", ex);
             response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Authentication failed");
-            return; // Stop further processing
+            return; // Early exit from filter chain
         }
 
         filterChain.doFilter(request, response);
     }
+
 
     private String getJwtFromRequest(HttpServletRequest request) {
         String bearerToken = request.getHeader("Authorization");

@@ -29,18 +29,13 @@ public class PostService {
 
     // 게시글 생성
     public Post createPost(PostCreateDto createDto, MultipartFile image) throws IOException {
-        Post post = new Post();
-        post.setTitle(createDto.getTitle());
-        post.setContent(createDto.getContent());
-        post.setAuthorId(createDto.getAuthorId());
-        post.setTags(createDto.getTags());
-        post.setCreatedAt(new Date());
-        post.setUpdatedAt(new Date());
+        Post post = new Post(createDto.getTitle(), createDto.getContent(), createDto.getAuthorId(), createDto.getAuthorNickname(), createDto.getTags());
         if (image != null && !image.isEmpty()) {
             post.addImage(image.getBytes());
         }
         return postRepository.save(post);
     }
+
 
     // 게시글 조회
     public Optional<Post> getPostById(String postId) {
@@ -120,12 +115,12 @@ public class PostService {
     // 이미지 업로드
     public Optional<Post> uploadImageToPost(String postId, MultipartFile image) throws IOException {
         return postRepository.findById(postId).map(post -> {
-            if (image != null && !image.isEmpty()) {
-                try {
+            try {
+                if (image != null && !image.isEmpty()) {
                     post.addImage(image.getBytes());
-                } catch (IOException e) {
-                    logger.error("Image upload failed", e);
                 }
+            } catch (IOException e) {
+                logger.error("Image upload failed for Post ID: " + postId, e);
             }
             return postRepository.save(post);
         });

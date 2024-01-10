@@ -15,6 +15,7 @@ public class PostResponseDto {
     private String title; // 제목
     private String content; // 내용
     private String authorId; // 작성자 ID
+    private String authorNickname;
     private Date createdAt; // 생성 날짜
     private Date updatedAt; // 수정 날짜
     private Set<String> tags; // 태그 세트

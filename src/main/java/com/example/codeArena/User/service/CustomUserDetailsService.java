@@ -3,6 +3,9 @@ package com.example.codeArena.User.service;
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.exception.CustomException;
+import com.example.codeArena.security.UserPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -14,6 +17,7 @@ import java.util.List;
 
 @Service
 public class CustomUserDetailsService implements UserDetailsService {
+    private static final Logger logger = LoggerFactory.getLogger(CustomUserDetailsService.class);
 
     private final UserRepository userRepository;
 
@@ -25,15 +29,15 @@ public class CustomUserDetailsService implements UserDetailsService {
     public UserDetails loadUserByUsername(String username) {
         User appUser = userRepository.findByUsername(username)
                 .orElseThrow(() -> new CustomException(CustomException.ErrorCode.USER_NOT_FOUND));
+        logger.info("사용자 이름으로 로드된 사용자: {}", appUser.getUsername());
 
-        List<GrantedAuthority> authorities = Collections.singletonList(
-                new SimpleGrantedAuthority("ROLE_" + appUser.getRole())
-        );
-
-        return new org.springframework.security.core.userdetails.User(
+        // UserPrincipal을 반환하도록 변경
+        return new UserPrincipal(
+                appUser.getId(),
                 appUser.getUsername(),
                 appUser.getPassword(),
-                authorities
+                appUser.getNickname(),
+                Collections.singletonList(new SimpleGrantedAuthority("ROLE_" + appUser.getRole()))
         );
     }
 }

@@ -4,10 +4,14 @@ import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.model.Post;
 import com.example.codeArena.Post.service.PostService;
 import com.example.codeArena.security.UserPrincipal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
@@ -22,6 +26,9 @@ import java.util.Set;
 public class PostController {
 
     private final PostService postService;
+    private static final Logger logger = LoggerFactory.getLogger(PostController.class);
+
+
 
     @Autowired
     public PostController(PostService postService) {
@@ -29,14 +36,28 @@ public class PostController {
     }
 
     // 게시글 생성
-    @PostMapping
+    @PostMapping(consumes = {"multipart/form-data"})
     public ResponseEntity<Post> createPost(@RequestParam("title") String title,
                                            @RequestParam("content") String content,
-                                           @AuthenticationPrincipal UserPrincipal currentUser,
                                            @RequestParam("tags") Set<String> tags,
-                                           @RequestParam(value = "image", required = false) MultipartFile image) throws IOException {
-        PostCreateDto createDto = new PostCreateDto(title, content, currentUser.getId(), tags);
-        Post post = postService.createPost(createDto, image);
+                                           @RequestParam(value = "image", required = false) MultipartFile image) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
+            logger.error("User authentication is null or not an instance of UserPrincipal.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        UserPrincipal currentUser = (UserPrincipal) authentication.getPrincipal();
+        logger.info("Authenticated user ID: {}", currentUser.getId());
+
+        PostCreateDto createDto = new PostCreateDto(title, content, currentUser.getId(), currentUser.getNickname(), tags);
+        Post post;
+        try {
+            post = postService.createPost(createDto, image);
+        } catch (IOException e) {
+            logger.error("Error while creating post", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
         return ResponseEntity.ok(post);
     }
 

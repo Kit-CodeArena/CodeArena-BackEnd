@@ -22,7 +22,7 @@ public class JwtTokenProvider {
     private final int jwtExpirationInMs;
     private SecretKey key;
 
-    // SecretKey와 기타 초기화 작업을 위한 PostConstruct 메소드
+    // SecretKey와 기타 초기화 작업을 위한 PostConsAtruct 메소드
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -59,7 +59,8 @@ public class JwtTokenProvider {
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-
+        logger.info("클레임 주제(사용자 이름): {}", claims.getSubject());
+        logger.info("클레임 역할: {}", claims.get("role"));
         return claims.getSubject();
     }
 
