@@ -33,6 +33,7 @@ public class CustomException extends RuntimeException {
         NICKNAME_ALREADY_EXISTS("이미 사용 중인 닉네임입니다."),
 
         INVALID_INPUT_VALUE("잘못된 입력 값 입니다."), // validation error 는 400
+        INVALID_CONTEXT("Security Context 에 인증 정보가 없습니다.") // 401 - 인증 되지 않은 사용자
         ;
 
         private final String message;

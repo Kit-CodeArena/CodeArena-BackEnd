@@ -21,5 +21,4 @@ public class ChatRoomCreateRequest {
 
     @NotNull(message = "태그를 입력해 주세요.")
     private Tag tag;
-    // TODO: User 추가
 }
