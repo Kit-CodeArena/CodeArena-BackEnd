@@ -9,6 +9,8 @@ ivy-cache
 argfile*
 activemq-data/
 classes/
+
+# Application configuration
 application.yml
 
 # Log files

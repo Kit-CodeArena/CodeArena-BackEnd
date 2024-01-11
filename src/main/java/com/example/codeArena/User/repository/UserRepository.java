@@ -18,5 +18,4 @@ public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findByNickname(String nickname);
     boolean existsByNickname(String nickname);
 
-    // 여기에 필요한 추가적인 쿼리 메소드를 정의할 수 있습니다.
 }

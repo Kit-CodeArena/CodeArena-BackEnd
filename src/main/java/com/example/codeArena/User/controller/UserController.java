@@ -14,40 +14,39 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.Optional;
 
+@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/users")
 public class UserController {
 
     private final UserService userService;
+    private final JwtTokenProvider tokenProvider;
 
     @Autowired
-    private JwtTokenProvider tokenProvider; // JwtTokenProvider 추가
-
-    @Autowired
-    public UserController(UserService userService) {
+    public UserController(UserService userService, JwtTokenProvider tokenProvider) {
         this.userService = userService;
+        this.tokenProvider = tokenProvider;
     }
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerUser(@RequestBody @Valid RegisterDto registerDto) {
+    public ResponseEntity<TokenDto> registerUser(@RequestBody @Valid RegisterDto registerDto) {
         User user = userService.registerUser(registerDto);
-        String token = tokenProvider.generateToken(user); // 수정: User 객체 전달
-        return ResponseEntity.ok(new TokenDto(token)); // 토큰만 반환
+        String token = tokenProvider.generateToken(user);
+        return ResponseEntity.ok(new TokenDto(token));
     }
+
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody @Valid LoginDto loginDto) {
         Optional<String> jwtToken = userService.loginUser(loginDto.getEmail(), loginDto.getPassword());
 
         if (jwtToken.isPresent()) {
-            TokenDto tokenDto = new TokenDto(); // TokenDto 객체 생성
-            tokenDto.setToken(jwtToken.get()); // 토큰 설정
-            return ResponseEntity.ok(tokenDto); // TokenDto 객체 반환
+            TokenDto tokenDto = new TokenDto();
+            tokenDto.setToken(jwtToken.get());
+            return ResponseEntity.ok(tokenDto);
         } else {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
     }
-
-
 
     @GetMapping("/{email}")
     public ResponseEntity<?> getUserInfo(@PathVariable String email) {
