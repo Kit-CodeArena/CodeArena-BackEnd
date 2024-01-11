@@ -50,10 +50,10 @@ public class ChatRoom {
     private LocalDateTime createTime;
 
     // TODO: User table과 연관 관계 설정 후, 방을 만든 사람에 대한 정보 추가
-    @OneToOne
-    private User user;
+//    @OneToOne
+//    private User user;
 
-    @OneToMany(mappedBy = "chat_rooms", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
 
 
@@ -65,7 +65,7 @@ public class ChatRoom {
         room.curUserNum = 0; // 초기값 설정
         room.tag = dto.getTag();
         room.createTime = LocalDateTime.now();
-        // TODO: User 추가
+        // room.user = user;
         return room;
     }
 }
