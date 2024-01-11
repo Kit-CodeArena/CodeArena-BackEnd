@@ -24,13 +24,14 @@ public class CommentController {
     public CommentController(CommentService commentService) {
         this.commentService = commentService;
     }
+
     // 댓글 생성
     @PostMapping
     public ResponseEntity<Comment> createComment(@RequestBody CommentCreateDto commentDto,
                                                  @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!currentUser.getId().equals(commentDto.getAuthorId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "댓글 생성 권한이 없습니다.");
-        }
+        // 현재 인증된 사용자의 ID와 닉네임을 CommentCreateDto에 설정
+        commentDto.setAuthorId(currentUser.getId());
+        commentDto.setAuthorNickname(currentUser.getNickname());
         Comment comment = commentService.createComment(commentDto);
         return ResponseEntity.ok(comment);
     }
@@ -65,11 +66,10 @@ public class CommentController {
     public ResponseEntity<Comment> addReplyToComment(@PathVariable String commentId,
                                                      @RequestBody CommentCreateDto replyDto,
                                                      @AuthenticationPrincipal UserPrincipal currentUser) {
-        if (!currentUser.getId().equals(replyDto.getAuthorId())) {
-            throw new ResponseStatusException(HttpStatus.FORBIDDEN, "대댓글 생성 권한이 없습니다.");
-        }
-        Comment replyComment = commentService.createComment(replyDto);
-        Comment updatedComment = commentService.addReplyToComment(commentId, replyComment.getId());
-        return ResponseEntity.ok(updatedComment);
+        replyDto.setAuthorId(currentUser.getId());
+        replyDto.setAuthorNickname(currentUser.getNickname());
+        replyDto.setParentCommentId(commentId); // 원 댓글 ID 설정
+        Comment replyComment = commentService.createReply(replyDto);
+        return ResponseEntity.ok(replyComment);
     }
 }

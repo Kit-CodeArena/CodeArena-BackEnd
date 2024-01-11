@@ -21,12 +21,14 @@ public class CommentService {
     public CommentService(CommentRepository commentRepository) {
         this.commentRepository = commentRepository;
     }
+
     // 댓글 생성
     @Transactional
     public Comment createComment(CommentCreateDto createDto) {
         Comment comment = new Comment();
         comment.setPostId(createDto.getPostId());
         comment.setAuthorId(createDto.getAuthorId());
+        comment.setAuthorNickname(createDto.getAuthorNickname());
         comment.setContent(createDto.getContent());
         comment.setCreatedAt(new Date());
         return commentRepository.save(comment);
@@ -63,12 +65,17 @@ public class CommentService {
         commentRepository.deleteById(commentId);
     }
 
-    // 대댓글 추가
+
+    // 대댓글 생성
     @Transactional
-    public Comment addReplyToComment(String commentId, String replyCommentId) {
-        Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 댓글을 찾을 수 없습니다: " + commentId));
-        comment.addReply(replyCommentId);
-        return commentRepository.save(comment);
+    public Comment createReply(CommentCreateDto replyDto) {
+        Comment reply = new Comment();
+        reply.setPostId(replyDto.getPostId());
+        reply.setAuthorId(replyDto.getAuthorId());
+        reply.setAuthorNickname(replyDto.getAuthorNickname());
+        reply.setContent(replyDto.getContent());
+        reply.setCreatedAt(new Date());
+        reply.setParentCommentId(replyDto.getParentCommentId()); // 원 댓글 ID 설정
+        return commentRepository.save(reply);
     }
 }
