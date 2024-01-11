@@ -1,0 +1,11 @@
+version: '3'
+
+services:
+  mysql:
+    image: mysql
+    container_name: mysql-container
+    environment:
+      MYSQL_ROOT_PASSWORD: ${PASSWORD}
+      MYSQL_DATABASE: codeArena
+    ports:
+      - "127.0.0.1:3306:3306"
