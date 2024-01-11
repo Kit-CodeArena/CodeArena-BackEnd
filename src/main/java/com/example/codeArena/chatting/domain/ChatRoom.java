@@ -2,6 +2,7 @@ package com.example.codeArena.chatting.domain;
 
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -9,13 +10,16 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.springframework.boot.autoconfigure.domain.EntityScan;
 
 @Getter
 @Setter
@@ -46,8 +50,11 @@ public class ChatRoom {
     private LocalDateTime createTime;
 
     // TODO: User table과 연관 관계 설정 후, 방을 만든 사람에 대한 정보 추가
-//    @OneToOne
-//    private User user;
+    @OneToOne
+    private User user;
+
+    @OneToMany(mappedBy = "chat_rooms", cascade = CascadeType.ALL, orphanRemoval = true)
+    private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
 
 
     public static ChatRoom create(ChatRoomCreateRequest dto) {
