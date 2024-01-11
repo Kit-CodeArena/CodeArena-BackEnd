@@ -3,15 +3,14 @@ package com.example.codeArena.chatting.controller;
 import com.example.codeArena.chatting.domain.ChatRoom;
 import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
 import com.example.codeArena.chatting.service.ChatService;
+import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
@@ -28,7 +27,7 @@ public class ChatController {
 
     // 채팅방 생성
     @PostMapping("/room")
-    public ChatRoom createRoom(@RequestBody ChatRoomCreateRequest request){
+    public ChatRoom createRoom(@RequestBody @Valid ChatRoomCreateRequest request){
         return chatService.createRoom(request);
     }
 
