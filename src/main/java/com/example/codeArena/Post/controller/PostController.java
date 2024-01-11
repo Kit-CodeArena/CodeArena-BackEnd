@@ -77,10 +77,19 @@ public class PostController {
     }
 
     // 게시글 수정
-    @PutMapping("/{postId}")
+    @PutMapping(value = "/{postId}", consumes = {"multipart/form-data"})
     public ResponseEntity<Post> updatePost(@PathVariable String postId,
-                                           @AuthenticationPrincipal UserPrincipal currentUser,
-                                           @RequestBody PostCreateDto updateDto) {
+                                           @ModelAttribute PostCreateDto updateDto,
+                                           @RequestParam(value = "image", required = false) MultipartFile image) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
+            logger.error("User authentication is null or not an instance of UserPrincipal.");
+            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        }
+
+        UserPrincipal currentUser = (UserPrincipal) authentication.getPrincipal();
+        logger.info("Authenticated user ID: {}", currentUser.getId());
+
         Post updatedPost = postService.updatePost(postId, currentUser.getId(), updateDto)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
         return ResponseEntity.ok(updatedPost);
