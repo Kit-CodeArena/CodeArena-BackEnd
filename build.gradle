@@ -30,6 +30,9 @@ dependencies {
 	implementation 'jakarta.servlet:jakarta.servlet-api'
 	implementation 'jakarta.annotation:jakarta.annotation-api'
 
+	//mysql
+	implementation 'com.mysql:mysql-connector-j'
+
 	// chatting
 	implementation 'org.springframework.boot:spring-boot-starter-websocket'
 	implementation 'org.webjars:stomp-websocket:2.3.3-1'
