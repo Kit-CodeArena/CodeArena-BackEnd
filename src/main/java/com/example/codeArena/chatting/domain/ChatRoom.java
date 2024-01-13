@@ -49,9 +49,8 @@ public class ChatRoom {
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
-    // TODO: User table과 연관 관계 설정 후, 방을 만든 사람에 대한 정보 추가
-//    @OneToOne
-//    private User user;
+    @OneToOne
+    private User user;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
