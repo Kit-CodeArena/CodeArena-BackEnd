@@ -49,7 +49,7 @@ public class ChatRoom {
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
-    @OneToOne
+    @OneToOne // 사용자는 권한을 얻으면 채팅방을 1개만 만들 수 있게 한다.
     private User user;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)

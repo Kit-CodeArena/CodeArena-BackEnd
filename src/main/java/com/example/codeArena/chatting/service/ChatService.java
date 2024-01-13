@@ -1,6 +1,6 @@
 package com.example.codeArena.chatting.service;
 
-import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_INPUT_VALUE;
+import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_ALREADY_EXIST;
 import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_INPUT_VALUE_DTO;
 import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT_FOUND;
 
@@ -11,48 +11,29 @@ import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
 import com.example.codeArena.chatting.dto.ChatRoomDto;
 import com.example.codeArena.chatting.repository.ChatRoomRepository;
 import com.example.codeArena.exception.CustomException;
-import jakarta.annotation.PostConstruct;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Slf4j
 @RequiredArgsConstructor
 @Service
 public class ChatService {
-    private Map<String, ChatRoom> chatRooms;
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
 
-    // 의존 관계 주입 완료 후 실행
-    @PostConstruct
-    private void init() {
-        chatRooms = new LinkedHashMap<>();
-    }
-
-    // 모든 채팅방 조회
-    public List<ChatRoomDto> findAllRooms() {
-        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
-        return chatRooms.stream()
-                .map(ChatRoomDto::new)
-                .collect(Collectors.toList());
-    }
-
-    // 채팅방 하나 조회
-    public ChatRoom findRoomById(String roomId) {
-        return chatRooms.get(roomId);
-    }
-
-
+    @Transactional
     public ChatRoomDto createRoom(ChatRoomCreateRequest dto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if (chatRoomRepository.existsByUser(user)) { // 사용자와 관련된 방이 이미 존재하는지 확인
+            throw new CustomException(CHAT_ROOM_ALREADY_EXIST);
+        }
+
         ChatRoom chatRoom = ChatRoom.create(dto, user);
         ChatRoom createdChatRoom = chatRoomRepository.save(chatRoom);
 
@@ -61,5 +42,14 @@ public class ChatService {
                 .orElseThrow(()->new CustomException(INVALID_INPUT_VALUE_DTO));
 
         return response;
+    }
+
+    // 모든 채팅방 조회
+    @Transactional(readOnly = true)
+    public List<ChatRoomDto> findAllRooms() {
+        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+        return chatRooms.stream()
+                .map(ChatRoomDto::new)
+                .collect(Collectors.toList());
     }
 }
