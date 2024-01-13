@@ -2,9 +2,10 @@ package com.example.codeArena.exception;
 
 import com.example.codeArena.exception.CustomException.ErrorCode;
 import java.time.LocalDateTime;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import lombok.Builder;
 import lombok.Getter;
-import org.springframework.http.ResponseEntity;
 
 @Getter
 @Builder
@@ -16,11 +17,13 @@ public class ErrorResponse {
     private final String message; // 설정한 메시지
 
     public static ResponseEntity<ErrorResponse> toResponseEntity(ErrorCode errorCode) {
+        HttpStatus httpStatus = errorCode.getStatus(); // ErrorCode에 할당된 실제 상태 코드를 사용
+
         return ResponseEntity
-                .status(400) // TODO : 상태 코드 받아서 수정하기 (getStatus)
+                .status(httpStatus)
                 .body(ErrorResponse.builder()
-                        .status(400) // TODO : 상태 코드 받아서 수정하기 (getStatus().value())
-                        .error("error") // TODO : 상태 코드 받아서 수정하기 (getStatus().name())
+                        .status(httpStatus.value()) // ErrorCode에 할당된 상태 코드의 값
+                        .error(httpStatus.getReasonPhrase()) // ErrorCode에 할당된 상태 코드의 이름
                         .code(errorCode.name())
                         .message(errorCode.getMessage())
                         .build()
