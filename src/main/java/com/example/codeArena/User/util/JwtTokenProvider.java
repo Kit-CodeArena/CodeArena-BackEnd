@@ -1,6 +1,8 @@
 package com.example.codeArena.User.util;
 
 import com.example.codeArena.User.model.User;
+import com.example.codeArena.exception.CustomException;
+import com.example.codeArena.exception.CustomException.ErrorCode;
 import io.jsonwebtoken.*;
 import io.jsonwebtoken.security.Keys;
 import org.slf4j.Logger;
@@ -22,7 +24,6 @@ public class JwtTokenProvider {
     private final int jwtExpirationInMs;
     private SecretKey key;
 
-    // SecretKey와 기타 초기화 작업을 위한 PostConsAtruct 메소드
     @PostConstruct
     public void init() {
         this.key = Keys.hmacShaKeyFor(jwtSecret.getBytes());
@@ -34,16 +35,13 @@ public class JwtTokenProvider {
         this.jwtExpirationInMs = jwtExpirationInMs;
     }
 
-    // JWT 토큰 생성
     public String generateToken(User user) {
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
-        // JWT 클레임 생성
         Claims claims = Jwts.claims().setSubject(user.getNickname());
         claims.put("role", ROLE_PREFIX + user.getRole());
 
-        // JWT 토큰 생성
         return Jwts.builder()
                 .setClaims(claims)
                 .setIssuedAt(now)
@@ -52,7 +50,6 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // JWT 토큰에서 닉네임 가져오기
     public String getNicknameFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
@@ -63,8 +60,7 @@ public class JwtTokenProvider {
         return claims.getSubject();
     }
 
-    // JWT 토큰 유효성 검증
-    public boolean validateToken(String authToken) {
+    public boolean validateToken(String authToken) throws CustomException {
         try {
             Jwts.parserBuilder()
                     .setSigningKey(key)
@@ -73,7 +69,7 @@ public class JwtTokenProvider {
             return true;
         } catch (JwtException ex) {
             logger.error("JWT 토큰 유효성 검증 실패: {}", ex.getMessage());
+            throw new CustomException(ErrorCode.JWT_VALIDATION_FAILED);
         }
-        return false;
     }
 }

@@ -3,8 +3,8 @@ package com.example.codeArena.Post.service;
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.model.Post;
 import com.example.codeArena.Post.repository.PostRepository;
-import com.example.codeArena.exception.ResourceNotFoundException;
-import com.example.codeArena.exception.UnauthorizedAccessException;
+import com.example.codeArena.exception.CustomException;
+import com.example.codeArena.exception.CustomException.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -36,7 +36,6 @@ public class PostService {
         return postRepository.save(post);
     }
 
-
     // 게시글 조회
     public Optional<Post> getPostById(Long postId) {
         return postRepository.findById(postId);
@@ -48,15 +47,22 @@ public class PostService {
     }
 
     // 게시글 수정
-    public Optional<Post> updatePost(Long postId, Long currentUserId, PostCreateDto updateDto) {
+    public Optional<Post> updatePost(Long postId, Long currentUserId, PostCreateDto updateDto, MultipartFile image) throws IOException {
         return postRepository.findById(postId).map(post -> {
             if (!post.getAuthorId().equals(currentUserId)) {
-                throw new UnauthorizedAccessException("이 게시글을 수정할 권한이 없습니다.");
+                throw new CustomException(CustomException.ErrorCode.ACCESS_DENIED);
             }
             post.setTitle(updateDto.getTitle());
             post.setContent(updateDto.getContent());
             post.setTags(updateDto.getTags());
             post.setUpdatedAt(new Date());
+            if (image != null && !image.isEmpty()) {
+                try {
+                    post.addImage(image.getBytes());
+                } catch (IOException e) {
+                    throw new RuntimeException(e);
+                }
+            }
             return postRepository.save(post);
         });
     }
@@ -64,10 +70,10 @@ public class PostService {
     // 게시글 삭제
     public void deletePost(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 게시글을 찾을 수 없습니다: " + postId));
+                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
 
         if (!post.getAuthorId().equals(currentUserId)) {
-            throw new UnauthorizedAccessException("이 게시글을 삭제할 권한이 없습니다.");
+            throw new CustomException(ErrorCode.ACCESS_DENIED);
         }
 
         postRepository.deleteById(postId);
@@ -112,6 +118,7 @@ public class PostService {
         });
     }
 
+
     // 이미지 업로드
     public Optional<Post> uploadImageToPost(Long postId, MultipartFile image) throws IOException {
         return postRepository.findById(postId).map(post -> {
@@ -120,7 +127,8 @@ public class PostService {
                     post.addImage(image.getBytes());
                 }
             } catch (IOException e) {
-                logger.error("Image upload failed for Post ID: " + postId, e);
+                logger.error("게시글 ID " + postId + "에 대한 이미지 업로드 중 오류 발생", e);
+                throw new CustomException(ErrorCode.IMAGE_PROCESSING_FAILED);
             }
             return postRepository.save(post);
         });

@@ -3,18 +3,16 @@ package com.example.codeArena.Post.controller;
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.model.Post;
 import com.example.codeArena.Post.service.PostService;
+import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
 import java.util.List;
@@ -40,29 +38,25 @@ public class PostController {
                                            @RequestParam(value = "image", required = false) MultipartFile image) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
-            logger.error("User authentication is null or not an instance of UserPrincipal.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+            throw new CustomException(CustomException.ErrorCode.INVALID_CONTEXT);
         }
 
         UserPrincipal currentUser = (UserPrincipal) authentication.getPrincipal();
-        logger.info("Authenticated user ID: {}", currentUser.getId());
-
         PostCreateDto createDto = new PostCreateDto(title, content, currentUser.getId(), currentUser.getNickname(), tags);
-        Post post;
+
         try {
-            post = postService.createPost(createDto, image);
+            Post post = postService.createPost(createDto, image);
+            return ResponseEntity.ok(post);
         } catch (IOException e) {
-            logger.error("Error while creating post", e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            logger.error("이미지 처리 중 오류 발생", e);
+            throw new CustomException(CustomException.ErrorCode.IMAGE_PROCESSING_FAILED);
         }
-        return ResponseEntity.ok(post);
     }
 
     // 게시글 전체 조회
     @GetMapping
     public ResponseEntity<List<Post>> getAllPosts() {
-        List<Post> posts = postService.getAllPosts();
-        return ResponseEntity.ok(posts);
+        return ResponseEntity.ok(postService.getAllPosts());
     }
 
     // 특정 게시글 조회
@@ -70,7 +64,7 @@ public class PostController {
     public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
         return postService.getPostById(postId)
                 .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
     }
 
     // 게시글 수정
@@ -78,24 +72,21 @@ public class PostController {
     public ResponseEntity<Post> updatePost(@PathVariable Long postId,
                                            @ModelAttribute PostCreateDto updateDto,
                                            @RequestParam(value = "image", required = false) MultipartFile image) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
-            logger.error("User authentication is null or not an instance of UserPrincipal.");
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
+        UserPrincipal currentUser = getCurrentUser();
+        try {
+            Post updatedPost = postService.updatePost(postId, currentUser.getId(), updateDto, image)
+                    .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
+            return ResponseEntity.ok(updatedPost);
+        } catch (IOException e) {
+            logger.error("이미지 처리 중 오류 발생", e);
+            throw new CustomException(CustomException.ErrorCode.IMAGE_PROCESSING_FAILED);
         }
-
-        UserPrincipal currentUser = (UserPrincipal) authentication.getPrincipal();
-        logger.info("Authenticated user ID: {}", currentUser.getId());
-
-        Post updatedPost = postService.updatePost(postId, currentUser.getId(), updateDto)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
-        return ResponseEntity.ok(updatedPost);
     }
 
     // 게시글 삭제
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable Long postId,
-                                           @AuthenticationPrincipal UserPrincipal currentUser) {
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId) {
+        UserPrincipal currentUser = getCurrentUser();
         postService.deletePost(postId, currentUser.getId());
         return ResponseEntity.ok().build();
     }
@@ -103,29 +94,26 @@ public class PostController {
     // 특정 사용자가 작성한 게시글 조회
     @GetMapping("/user/{authorId}")
     public ResponseEntity<List<Post>> getPostsByAuthor(@PathVariable Long authorId) {
-        List<Post> posts = postService.getPostsByAuthor(authorId);
-        return ResponseEntity.ok(posts);
+        return ResponseEntity.ok(postService.getPostsByAuthor(authorId));
     }
 
     // 제목으로 게시글 검색
     @GetMapping("/search/title")
     public ResponseEntity<List<Post>> getPostsByTitle(@RequestParam String title) {
-        List<Post> posts = postService.getPostsByTitle(title);
-        return ResponseEntity.ok(posts);
+        return ResponseEntity.ok(postService.getPostsByTitle(title));
     }
 
     // 태그로 게시글 검색
     @GetMapping("/search/tag")
     public ResponseEntity<List<Post>> getPostsByTag(@RequestParam String tag) {
-        List<Post> posts = postService.getPostsByTag(tag);
-        return ResponseEntity.ok(posts);
+        return ResponseEntity.ok(postService.getPostsByTag(tag));
     }
 
     // 게시글에 좋아요 추가
     @PostMapping("/{postId}/like")
     public ResponseEntity<Post> incrementLikes(@PathVariable Long postId) {
         Post updatedPost = postService.incrementLikes(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
         return ResponseEntity.ok(updatedPost);
     }
 
@@ -133,7 +121,7 @@ public class PostController {
     @PostMapping("/{postId}/view")
     public ResponseEntity<Post> incrementViews(@PathVariable Long postId) {
         Post updatedPost = postService.incrementViews(postId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
         return ResponseEntity.ok(updatedPost);
     }
 
@@ -141,15 +129,23 @@ public class PostController {
     @PostMapping("/{postId}/comment/{commentId}")
     public ResponseEntity<Post> addCommentToPost(@PathVariable Long postId, @PathVariable Long commentId) {
         Post updatedPost = postService.addCommentToPost(postId, commentId)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
         return ResponseEntity.ok(updatedPost);
     }
 
     // 이미지 업로드
     @PostMapping("/{postId}/uploadImage")
-    public ResponseEntity<Post> uploadImageToPost(@PathVariable Long postId, @RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<Post> uploadImageToPost(@PathVariable Long postId,
+                                                  @RequestParam("image") MultipartFile image) throws IOException {
         Post updatedPost = postService.uploadImageToPost(postId, image)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
         return ResponseEntity.ok(updatedPost);
+    }
+    private UserPrincipal getCurrentUser() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
+            throw new CustomException(CustomException.ErrorCode.INVALID_CONTEXT);
+        }
+        return (UserPrincipal) authentication.getPrincipal();
     }
 }
