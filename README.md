@@ -11,7 +11,7 @@ Docker 기반 경진 대회 플랫폼
 |Tool|Intellij, Docker|
 |FrameWork|Spring Boot (3.1.7)|
 |Language|Java 17|
-|Database|MongoDB|
+|Database|MySQL|
 |Collaboration|Git, Github, Discord, Notion|
 
 ## 👨‍👦‍👦 Collaborator
