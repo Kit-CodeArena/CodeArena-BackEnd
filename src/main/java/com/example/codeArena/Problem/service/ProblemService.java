@@ -5,6 +5,8 @@ import com.example.codeArena.Problem.dto.ProblemDto;
 import com.example.codeArena.Problem.dto.ProblemUpdateDto;
 import com.example.codeArena.Problem.model.Problem;
 import com.example.codeArena.Problem.repository.ProblemRepository;
+import com.example.codeArena.exception.CustomException;
+import static com.example.codeArena.exception.CustomException.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,9 @@ public class ProblemService {
 
     // 문제 삭제
     public void deleteProblem(Long id) {
+        if (!problemRepository.existsById(id)) {
+            throw new CustomException(ErrorCode.PROBLEM_NOT_FOUND);
+        }
         problemRepository.deleteById(id);
     }
 
@@ -82,7 +87,7 @@ public class ProblemService {
                 .collect(Collectors.toList());
     }
 
-    // Problem 엔티티를 ProblemDto로 변환
+    /// Problem 엔티티를 ProblemDto로 변환
     private ProblemDto convertToDto(Problem problem) {
         return new ProblemDto(problem.getId(), problem.getTitle(), problem.getDescription(),
                 problem.getDifficulty(), problem.getInputFormat(),
@@ -93,7 +98,7 @@ public class ProblemService {
                 problem.getCategory(), problem.getTags().toArray(new String[0]));
     }
 
-    // Update fields of Problem based on DTO
+    // DTO를 기반으로 문제 필드 업데이트
     private void updateProblemFields(Problem problem, Object dto) {
         if (dto instanceof ProblemCreateDto createDto) {
             setProblemFieldsFromDto(problem, createDto.getTitle(), createDto.getDescription(),
@@ -111,7 +116,8 @@ public class ProblemService {
                     new ArrayList<>(Arrays.asList(updateDto.getTags())));
         }
     }
-    // Set fields of Problem from DTO data
+
+    // DTO 데이터에서 문제 필드 설정
     private void setProblemFieldsFromDto(Problem problem, String title, String description,
                                          String difficulty, String inputFormat, String outputFormat,
                                          String sampleInput, String sampleOutput, Integer timeLimit,

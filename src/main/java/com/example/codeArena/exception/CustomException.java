@@ -7,12 +7,12 @@ import lombok.Getter;
 public class CustomException extends RuntimeException {
 
     private final ErrorCode errorCode;
-    private final HttpStatus status; // HTTP 상태 코드 추가
+    private final HttpStatus status;
 
     public CustomException(ErrorCode errorCode) {
         super(errorCode.getMessage());
         this.errorCode = errorCode;
-        this.status = errorCode.getStatus(); // 상태 코드 초기화
+        this.status = errorCode.getStatus();
     }
 
     /*
@@ -34,7 +34,9 @@ public class CustomException extends RuntimeException {
         NICKNAME_ALREADY_EXISTS("이미 사용 중인 닉네임입니다.", HttpStatus.CONFLICT),
         INVALID_INPUT_VALUE("잘못된 입력 값 입니다.", HttpStatus.BAD_REQUEST),
         INVALID_CONTEXT("Security Context 에 인증 정보가 없습니다.", HttpStatus.UNAUTHORIZED),
-        JWT_VALIDATION_FAILED("JWT 토큰 검증 실패", HttpStatus.UNAUTHORIZED);
+        JWT_VALIDATION_FAILED("JWT 토큰 검증 실패", HttpStatus.UNAUTHORIZED),
+        PROBLEM_NOT_FOUND("문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+
 
         private final String message;
         @Getter
@@ -44,7 +46,5 @@ public class CustomException extends RuntimeException {
             this.message = message;
             this.status = status;
         }
-
-    }
+        }
 }
-
