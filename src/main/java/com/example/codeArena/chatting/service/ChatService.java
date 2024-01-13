@@ -18,6 +18,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,10 +38,11 @@ public class ChatService {
     }
 
     // 모든 채팅방 조회
-    public List<ChatRoom> findAllRoom() {
-        List<ChatRoom> result = new ArrayList<>(chatRooms.values());
-        Collections.reverse(result); // 최근 생성 순
-        return result;
+    public List<ChatRoomDto> findAllRooms() {
+        List<ChatRoom> chatRooms = chatRoomRepository.findAll();
+        return chatRooms.stream()
+                .map(ChatRoomDto::new)
+                .collect(Collectors.toList());
     }
 
     // 채팅방 하나 조회
@@ -48,8 +50,7 @@ public class ChatService {
         return chatRooms.get(roomId);
     }
 
-    // 새로운 방 생성
-    // TODO: User 연관 관계 설정 후, 입력으로 받아서 방을 만들 때 방 만든 사람 정보 추가
+
     public ChatRoomDto createRoom(ChatRoomCreateRequest dto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
         ChatRoom chatRoom = ChatRoom.create(dto, user);

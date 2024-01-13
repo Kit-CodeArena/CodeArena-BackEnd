@@ -29,8 +29,8 @@ public class ChatController {
 
     // 모든 채팅방 목록
     @GetMapping("/rooms")
-    public List<ChatRoom> findAllRoom() {
-        return chatService.findAllRoom();
+    public List<ChatRoomDto> findAllRoom() {
+        return chatService.findAllRooms();
     }
 
     /*
