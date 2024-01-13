@@ -56,7 +56,7 @@ public class ChatRoom {
     private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
 
 
-    public static ChatRoom create(ChatRoomCreateRequest dto) {
+    public static ChatRoom create(ChatRoomCreateRequest dto, User user) {
         ChatRoom room = new ChatRoom();
         room.roomId = UUID.randomUUID().toString();
         room.name = dto.getName();
@@ -64,7 +64,7 @@ public class ChatRoom {
         room.curUserNum = 0; // 초기값 설정
         room.tag = dto.getTag();
         room.createTime = LocalDateTime.now();
-        // room.user = user;
+        room.user = user;
         return room;
     }
 }

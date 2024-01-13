@@ -45,7 +45,7 @@ public class ChatController {
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
             throw new CustomException(INVALID_CONTEXT);
         }
-        return chatService.createRoom(request);
+        return chatService.createRoom(request, user.getId());
     }
 
     // 특정 채팅방 조회
