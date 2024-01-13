@@ -35,7 +35,11 @@ public class CustomException extends RuntimeException {
         INVALID_INPUT_VALUE("잘못된 입력 값 입니다.", HttpStatus.BAD_REQUEST),
         INVALID_CONTEXT("Security Context 에 인증 정보가 없습니다.", HttpStatus.UNAUTHORIZED),
         JWT_VALIDATION_FAILED("JWT 토큰 검증 실패", HttpStatus.UNAUTHORIZED),
-        PROBLEM_NOT_FOUND("문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND);
+        PROBLEM_NOT_FOUND("문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+        POST_NOT_FOUND("게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+        COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+        IMAGE_PROCESSING_FAILED("이미지 처리 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
+        ACCESS_DENIED("접근이 거부되었습니다.", HttpStatus.FORBIDDEN);
 
 
         private final String message;
