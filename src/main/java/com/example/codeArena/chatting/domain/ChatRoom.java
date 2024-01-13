@@ -34,7 +34,7 @@ public class ChatRoom {
     @Column(name = "room_id", nullable = false, unique = true)
     private String roomId;
 
-    @Column(nullable = false)
+    @Column(nullable = false, length = 30)
     private String name;
 
     @Column(name = "max_user_num", nullable = false)
