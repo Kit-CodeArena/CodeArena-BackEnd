@@ -12,7 +12,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Document
 public class Submission {
     @Id
-    private String id;
+    private Long id;
 
     private String userId; // 제출한 사용자 ID
     private String problemId; // 문제 ID

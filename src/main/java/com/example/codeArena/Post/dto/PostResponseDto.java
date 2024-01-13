@@ -11,7 +11,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 public class PostResponseDto {
-    private String id; // 게시글 ID
+    private Long id; // 게시글 ID
     private String title; // 제목
     private String content; // 내용
     private String authorId; // 작성자 ID

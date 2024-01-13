@@ -20,15 +20,12 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/posts")
 public class PostController {
 
     private final PostService postService;
     private static final Logger logger = LoggerFactory.getLogger(PostController.class);
-
-
 
     @Autowired
     public PostController(PostService postService) {
@@ -70,7 +67,7 @@ public class PostController {
 
     // 특정 게시글 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostById(@PathVariable String postId) {
+    public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
         return postService.getPostById(postId)
                 .map(ResponseEntity::ok)
                 .orElse(ResponseEntity.notFound().build());
@@ -78,7 +75,7 @@ public class PostController {
 
     // 게시글 수정
     @PutMapping(value = "/{postId}", consumes = {"multipart/form-data"})
-    public ResponseEntity<Post> updatePost(@PathVariable String postId,
+    public ResponseEntity<Post> updatePost(@PathVariable Long postId,
                                            @ModelAttribute PostCreateDto updateDto,
                                            @RequestParam(value = "image", required = false) MultipartFile image) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -97,7 +94,7 @@ public class PostController {
 
     // 게시글 삭제
     @DeleteMapping("/{postId}")
-    public ResponseEntity<Void> deletePost(@PathVariable String postId,
+    public ResponseEntity<Void> deletePost(@PathVariable Long postId,
                                            @AuthenticationPrincipal UserPrincipal currentUser) {
         postService.deletePost(postId, currentUser.getId());
         return ResponseEntity.ok().build();
@@ -105,7 +102,7 @@ public class PostController {
 
     // 특정 사용자가 작성한 게시글 조회
     @GetMapping("/user/{authorId}")
-    public ResponseEntity<List<Post>> getPostsByAuthor(@PathVariable String authorId) {
+    public ResponseEntity<List<Post>> getPostsByAuthor(@PathVariable Long authorId) {
         List<Post> posts = postService.getPostsByAuthor(authorId);
         return ResponseEntity.ok(posts);
     }
@@ -126,7 +123,7 @@ public class PostController {
 
     // 게시글에 좋아요 추가
     @PostMapping("/{postId}/like")
-    public ResponseEntity<Post> incrementLikes(@PathVariable String postId) {
+    public ResponseEntity<Post> incrementLikes(@PathVariable Long postId) {
         Post updatedPost = postService.incrementLikes(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
         return ResponseEntity.ok(updatedPost);
@@ -134,7 +131,7 @@ public class PostController {
 
     // 게시글 조회수 증가
     @PostMapping("/{postId}/view")
-    public ResponseEntity<Post> incrementViews(@PathVariable String postId) {
+    public ResponseEntity<Post> incrementViews(@PathVariable Long postId) {
         Post updatedPost = postService.incrementViews(postId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
         return ResponseEntity.ok(updatedPost);
@@ -142,7 +139,7 @@ public class PostController {
 
     // 댓글 추가
     @PostMapping("/{postId}/comment/{commentId}")
-    public ResponseEntity<Post> addCommentToPost(@PathVariable String postId, @PathVariable String commentId) {
+    public ResponseEntity<Post> addCommentToPost(@PathVariable Long postId, @PathVariable Long commentId) {
         Post updatedPost = postService.addCommentToPost(postId, commentId)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
         return ResponseEntity.ok(updatedPost);
@@ -150,7 +147,7 @@ public class PostController {
 
     // 이미지 업로드
     @PostMapping("/{postId}/uploadImage")
-    public ResponseEntity<Post> uploadImageToPost(@PathVariable String postId, @RequestParam("image") MultipartFile image) throws IOException {
+    public ResponseEntity<Post> uploadImageToPost(@PathVariable Long postId, @RequestParam("image") MultipartFile image) throws IOException {
         Post updatedPost = postService.uploadImageToPost(postId, image)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "게시글을 찾을 수 없습니다."));
         return ResponseEntity.ok(updatedPost);

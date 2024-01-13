@@ -11,14 +11,14 @@ import java.util.Collection;
 public class UserPrincipal implements UserDetails {
     private static final Logger logger = LoggerFactory.getLogger(UserPrincipal.class);
 
-    private final String id;
+    private final Long id;
     private final String username;
     private final String password;
     private final String nickname;
     private final Collection<? extends GrantedAuthority> authorities;
 
     // 생성자 추가
-    public UserPrincipal(String id, String username, String password, String nickname, Collection<? extends GrantedAuthority> authorities) {
+    public UserPrincipal(Long id, String username, String password, String nickname, Collection<? extends GrantedAuthority> authorities) {
         this.id = id;
         this.username = username;
         this.password = password;
@@ -62,8 +62,8 @@ public class UserPrincipal implements UserDetails {
     }
 
     // 사용자 ID 반환 메소드
-    public String getId() {
+    public Long getId() {
         logger.debug("User ID retrieved: {}", id);
-        return String.valueOf(id);
+        return Long.valueOf(id);
     }
 }

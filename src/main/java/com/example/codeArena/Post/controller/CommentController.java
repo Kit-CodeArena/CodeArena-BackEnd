@@ -13,7 +13,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/comments")
 public class CommentController {
@@ -38,14 +37,14 @@ public class CommentController {
 
     // 특정 게시글에 대한 댓글 조회
     @GetMapping("/post/{postId}")
-    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable String postId) {
+    public ResponseEntity<List<Comment>> getCommentsByPostId(@PathVariable Long postId) {
         List<Comment> comments = commentService.getCommentsByPostId(postId);
         return ResponseEntity.ok(comments);
     }
 
     // 댓글 수정
     @PutMapping("/{commentId}")
-    public ResponseEntity<Comment> updateComment(@PathVariable String commentId,
+    public ResponseEntity<Comment> updateComment(@PathVariable Long commentId,
                                                  @RequestBody String content,
                                                  @AuthenticationPrincipal UserPrincipal currentUser) {
         Comment updatedComment = commentService.updateComment(commentId, content, currentUser.getId())
@@ -55,7 +54,7 @@ public class CommentController {
 
     // 댓글 삭제
     @DeleteMapping("/{commentId}")
-    public ResponseEntity<Void> deleteComment(@PathVariable String commentId,
+    public ResponseEntity<Void> deleteComment(@PathVariable Long commentId,
                                               @AuthenticationPrincipal UserPrincipal currentUser) {
         commentService.deleteComment(commentId, currentUser.getId());
         return ResponseEntity.ok().build();
@@ -63,7 +62,7 @@ public class CommentController {
 
     // 대댓글 추가
     @PostMapping("/{commentId}/replies")
-    public ResponseEntity<Comment> addReplyToComment(@PathVariable String commentId,
+    public ResponseEntity<Comment> addReplyToComment(@PathVariable Long commentId,
                                                      @RequestBody CommentCreateDto replyDto,
                                                      @AuthenticationPrincipal UserPrincipal currentUser) {
         replyDto.setAuthorId(currentUser.getId());

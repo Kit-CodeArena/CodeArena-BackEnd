@@ -8,7 +8,6 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-@CrossOrigin(origins = "http://localhost:3000")
 @RestController
 @RequestMapping("/api/submissions")
 public class SubmissionController {
@@ -23,7 +22,7 @@ public class SubmissionController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<SubmissionDto>> getSubmissionsByUser(@PathVariable String userId) {
+    public ResponseEntity<List<SubmissionDto>> getSubmissionsByUser(@PathVariable Long userId) {
         List<SubmissionDto> submissions = submissionService.getSubmissionsByUser(userId);
         return ResponseEntity.ok(submissions);
     }
