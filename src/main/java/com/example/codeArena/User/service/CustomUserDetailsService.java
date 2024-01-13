@@ -22,10 +22,14 @@ public class CustomUserDetailsService implements UserDetailsService {
         this.userRepository = userRepository;
     }
 
+    // 사용자의 닉네임으로 사용자 정보를 로드합니다.
     @Override
     public UserDetails loadUserByUsername(String nickname) {
         User appUser = userRepository.findByNickname(nickname)
-                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.USER_NOT_FOUND));
+                .orElseThrow(() -> {
+                    logger.error("사용자를 찾을 수 없음: 닉네임 - {}", nickname);
+                    return new CustomException(CustomException.ErrorCode.USER_NOT_FOUND);
+                });
         logger.info("닉네임으로 로드된 사용자: {}", appUser.getNickname());
 
         return new UserPrincipal(

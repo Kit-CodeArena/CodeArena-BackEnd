@@ -66,4 +66,5 @@ public class UserPrincipal implements UserDetails {
         logger.debug("User ID retrieved: {}", id);
         return Long.valueOf(id);
     }
+
 }

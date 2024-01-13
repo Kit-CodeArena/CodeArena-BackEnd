@@ -3,7 +3,7 @@ package com.example.codeArena.Post.service;
 import com.example.codeArena.Post.dto.CommentCreateDto;
 import com.example.codeArena.Post.model.Comment;
 import com.example.codeArena.Post.repository.CommentRepository;
-import com.example.codeArena.exception.UnauthorizedAccessException;
+import com.example.codeArena.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -44,7 +44,7 @@ public class CommentService {
     public Optional<Comment> updateComment(Long commentId, String newContent, Long currentUserId) {
         return commentRepository.findById(commentId).map(comment -> {
             if (!comment.getAuthorId().equals(currentUserId)) {
-                throw new UnauthorizedAccessException("댓글 수정 권한이 없습니다.");
+                throw new CustomException(CustomException.ErrorCode.ACCESS_DENIED);
             }
             comment.setContent(newContent);
             comment.setUpdatedAt(new Date());
@@ -56,15 +56,14 @@ public class CommentService {
     @Transactional
     public void deleteComment(Long commentId, Long currentUserId) {
         Comment comment = commentRepository.findById(commentId)
-                .orElseThrow(() -> new IllegalArgumentException("해당 ID의 댓글을 찾을 수 없습니다: " + commentId));
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.COMMENT_NOT_FOUND));
 
         if (!comment.getAuthorId().equals(currentUserId)) {
-            throw new IllegalArgumentException("댓글을 삭제할 권한이 없습니다.");
+            throw new CustomException(CustomException.ErrorCode.ACCESS_DENIED);
         }
 
         commentRepository.deleteById(commentId);
     }
-
 
     // 대댓글 생성
     @Transactional
