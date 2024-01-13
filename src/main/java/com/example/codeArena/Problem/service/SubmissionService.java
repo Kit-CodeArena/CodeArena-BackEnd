@@ -29,7 +29,7 @@ public class SubmissionService {
         return convertToDto(savedSubmission);
     }
 
-    public List<SubmissionDto> getSubmissionsByUser(String userId) {
+    public List<SubmissionDto> getSubmissionsByUser(Long userId) {
         return submissionRepository.findByUserId(userId).stream()
                 .map(this::convertToDto)
                 .collect(Collectors.toList());

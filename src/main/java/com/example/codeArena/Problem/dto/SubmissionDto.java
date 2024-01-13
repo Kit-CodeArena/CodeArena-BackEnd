@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SubmissionDto {
-    private String id;
+    private Long id;
     private String userId;
     private String problemId;
     private String code;

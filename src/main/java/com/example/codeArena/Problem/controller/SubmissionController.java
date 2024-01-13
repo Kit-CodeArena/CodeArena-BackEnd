@@ -22,7 +22,7 @@ public class SubmissionController {
     }
 
     @GetMapping("/user/{userId}")
-    public ResponseEntity<List<SubmissionDto>> getSubmissionsByUser(@PathVariable String userId) {
+    public ResponseEntity<List<SubmissionDto>> getSubmissionsByUser(@PathVariable Long userId) {
         List<SubmissionDto> submissions = submissionService.getSubmissionsByUser(userId);
         return ResponseEntity.ok(submissions);
     }

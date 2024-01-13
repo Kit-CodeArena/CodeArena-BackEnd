@@ -8,6 +8,7 @@ import com.example.codeArena.Problem.repository.ProblemRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -27,7 +28,7 @@ public class ProblemService {
     }
 
     // 문제 삭제
-    public void deleteProblem(String id) {
+    public void deleteProblem(Long id) {
         problemRepository.deleteById(id);
     }
 
@@ -39,13 +40,13 @@ public class ProblemService {
     }
 
     // 특정 문제 조회
-    public Optional<ProblemDto> getProblemById(String id) {
+    public Optional<ProblemDto> getProblemById(Long id) {
         return problemRepository.findById(id)
                 .map(this::convertToDto);
     }
 
     // 문제 업데이트
-    public Optional<ProblemDto> updateProblem(String id, ProblemUpdateDto updateDto) {
+    public Optional<ProblemDto> updateProblem(Long id, ProblemUpdateDto updateDto) {
         return problemRepository.findById(id)
                 .map(problem -> {
                     updateProblemFields(problem, updateDto);
@@ -100,14 +101,14 @@ public class ProblemService {
                     createDto.getOutputFormat(), createDto.getSampleInput(),
                     createDto.getSampleOutput(), createDto.getTimeLimit(),
                     createDto.getMemoryLimit(), createDto.getCategory(),
-                    Arrays.asList(createDto.getTags()));
+                    new ArrayList<>(Arrays.asList(createDto.getTags())));
         } else if (dto instanceof ProblemUpdateDto updateDto) {
             setProblemFieldsFromDto(problem, updateDto.getTitle(), updateDto.getDescription(),
                     updateDto.getDifficulty(), updateDto.getInputFormat(),
                     updateDto.getOutputFormat(), updateDto.getSampleInput(),
                     updateDto.getSampleOutput(), updateDto.getTimeLimit(),
                     updateDto.getMemoryLimit(), updateDto.getCategory(),
-                    Arrays.asList(updateDto.getTags()));
+                    new ArrayList<>(Arrays.asList(updateDto.getTags())));
         }
     }
     // Set fields of Problem from DTO data

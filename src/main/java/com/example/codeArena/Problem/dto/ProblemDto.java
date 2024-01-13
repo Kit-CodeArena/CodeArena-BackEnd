@@ -8,7 +8,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProblemDto {
-    private String id;
+    private Long id;
     private String title;
     private String description;
     private String difficulty;

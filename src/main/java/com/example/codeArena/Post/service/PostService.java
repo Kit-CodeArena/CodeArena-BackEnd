@@ -38,7 +38,7 @@ public class PostService {
 
 
     // 게시글 조회
-    public Optional<Post> getPostById(String postId) {
+    public Optional<Post> getPostById(Long postId) {
         return postRepository.findById(postId);
     }
 
@@ -48,7 +48,7 @@ public class PostService {
     }
 
     // 게시글 수정
-    public Optional<Post> updatePost(String postId, String currentUserId, PostCreateDto updateDto) {
+    public Optional<Post> updatePost(Long postId, Long currentUserId, PostCreateDto updateDto) {
         return postRepository.findById(postId).map(post -> {
             if (!post.getAuthorId().equals(currentUserId)) {
                 throw new UnauthorizedAccessException("이 게시글을 수정할 권한이 없습니다.");
@@ -62,7 +62,7 @@ public class PostService {
     }
 
     // 게시글 삭제
-    public void deletePost(String postId, String currentUserId) {
+    public void deletePost(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId)
                 .orElseThrow(() -> new ResourceNotFoundException("해당 ID의 게시글을 찾을 수 없습니다: " + postId));
 
@@ -74,7 +74,7 @@ public class PostService {
     }
 
     // 특정 사용자가 작성한 게시글 조회
-    public List<Post> getPostsByAuthor(String authorId) {
+    public List<Post> getPostsByAuthor(Long authorId) {
         return postRepository.findByAuthorId(authorId);
     }
 
@@ -89,7 +89,7 @@ public class PostService {
     }
 
     // 게시글에 좋아요 추가
-    public Optional<Post> incrementLikes(String postId) {
+    public Optional<Post> incrementLikes(Long postId) {
         return postRepository.findById(postId).map(post -> {
             post.incrementLikes();
             return postRepository.save(post);
@@ -97,7 +97,7 @@ public class PostService {
     }
 
     // 게시글 조회수 증가
-    public Optional<Post> incrementViews(String postId) {
+    public Optional<Post> incrementViews(Long postId) {
         return postRepository.findById(postId).map(post -> {
             post.incrementViews();
             return postRepository.save(post);
@@ -105,7 +105,7 @@ public class PostService {
     }
 
     // 댓글 ID 추가
-    public Optional<Post> addCommentToPost(String postId, String commentId) {
+    public Optional<Post> addCommentToPost(Long postId, Long commentId) {
         return postRepository.findById(postId).map(post -> {
             post.addComment(commentId);
             return postRepository.save(post);
@@ -113,7 +113,7 @@ public class PostService {
     }
 
     // 이미지 업로드
-    public Optional<Post> uploadImageToPost(String postId, MultipartFile image) throws IOException {
+    public Optional<Post> uploadImageToPost(Long postId, MultipartFile image) throws IOException {
         return postRepository.findById(postId).map(post -> {
             try {
                 if (image != null && !image.isEmpty()) {

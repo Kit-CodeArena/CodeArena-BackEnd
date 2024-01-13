@@ -35,13 +35,13 @@ public class CommentService {
     }
 
     // 특정 게시글의 댓글 조회
-    public List<Comment> getCommentsByPostId(String postId) {
+    public List<Comment> getCommentsByPostId(Long postId) {
         return commentRepository.findByPostId(postId);
     }
 
     // 댓글 수정
     @Transactional
-    public Optional<Comment> updateComment(String commentId, String newContent, String currentUserId) {
+    public Optional<Comment> updateComment(Long commentId, String newContent, Long currentUserId) {
         return commentRepository.findById(commentId).map(comment -> {
             if (!comment.getAuthorId().equals(currentUserId)) {
                 throw new UnauthorizedAccessException("댓글 수정 권한이 없습니다.");
@@ -54,7 +54,7 @@ public class CommentService {
 
     // 댓글 삭제
     @Transactional
-    public void deleteComment(String commentId, String currentUserId) {
+    public void deleteComment(Long commentId, Long currentUserId) {
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new IllegalArgumentException("해당 ID의 댓글을 찾을 수 없습니다: " + commentId));
 

@@ -40,7 +40,7 @@ public class JwtTokenProvider {
         Date expiryDate = new Date(now.getTime() + jwtExpirationInMs);
 
         // JWT 클레임 생성
-        Claims claims = Jwts.claims().setSubject(user.getUsername());
+        Claims claims = Jwts.claims().setSubject(user.getNickname());
         claims.put("role", ROLE_PREFIX + user.getRole());
 
         // JWT 토큰 생성
@@ -52,15 +52,14 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    // JWT 토큰에서 사용자 이름 가져오기
-    public String getUsernameFromJWT(String token) {
+    // JWT 토큰에서 닉네임 가져오기
+    public String getNicknameFromJWT(String token) {
         Claims claims = Jwts.parserBuilder()
                 .setSigningKey(key)
                 .build()
                 .parseClaimsJws(token)
                 .getBody();
-        logger.info("클레임 주제(사용자 이름): {}", claims.getSubject());
-        logger.info("클레임 역할: {}", claims.get("role"));
+        logger.info("클레임 주제(닉네임): {}", claims.getSubject());
         return claims.getSubject();
     }
 

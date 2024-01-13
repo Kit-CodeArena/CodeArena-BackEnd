@@ -1,37 +1,49 @@
 package com.example.codeArena.Post.model;
 
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.mapping.Document;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-@Document
+@Entity
+@Table(name = "posts")
 public class Post {
     @Id
-    private String id; // 게시글 ID
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id; // 게시글 ID
 
     private String title; // 제목
     private String content; // 내용
-    private String authorId; // 작성자 ID (User 모델의 ID와 연결)
+
+    @Column(name = "author_id")
+    private Long authorId; // 작성자 ID (User 모델의 ID와 연결)
+
     private String authorNickname; // 작성자 닉네임
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date createdAt; // 생성 날짜
+
+    @Temporal(TemporalType.TIMESTAMP)
     private Date updatedAt; // 수정 날짜
-    private Set<String> tags; // 태그 세트
+
+    @ElementCollection
+    private Set<String> tags = new HashSet<>(); // 태그 세트
+
     private int likes; // 좋아요 수
     private int views; // 조회 수
-    private List<String> comments; // 댓글 ID 목록 (Comment 모델의 ID와 연결)
+
+    @ElementCollection
+    private List<Long> comments = new ArrayList<>(); // 댓글 ID 목록 (Comment 모델의 ID와 연결)
+
+    @Lob
     private byte[] image; // 이미지 데이터
 
-    public Post(String title, String content, String authorId, String authorNickname, Set<String> tags) {
+    public Post(String title, String content, Long authorId, String authorNickname, Set<String> tags) {
         this.title = title;
         this.content = content;
         this.authorId = authorId;
@@ -59,7 +71,7 @@ public class Post {
     }
 
     // 댓글 추가 메소드
-    public void addComment(String commentId) {
+    public void addComment(Long commentId) {
         this.comments.add(commentId);
     }
 }

@@ -1,17 +1,13 @@
 package com.example.codeArena.Problem.repository;
 
 import com.example.codeArena.Problem.model.Problem;
-import org.springframework.data.mongodb.repository.MongoRepository;
+import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
-
 import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ProblemRepository extends MongoRepository<Problem, String> {
-
-    // 특정 ID로 문제 찾기
-    Optional<Problem> findById(String id);
+public interface ProblemRepository extends JpaRepository<Problem, Long> {
 
     // 제목으로 문제 찾기
     List<Problem> findByTitleContaining(String title);
@@ -25,5 +21,4 @@ public interface ProblemRepository extends MongoRepository<Problem, String> {
     // 태그로 문제 필터링
     List<Problem> findByTagsContaining(String tag);
 
-    // 추가적인 쿼리 메서드가 필요하다면 여기에 구현
 }

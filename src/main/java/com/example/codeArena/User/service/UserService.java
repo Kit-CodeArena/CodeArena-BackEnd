@@ -54,7 +54,7 @@ public class UserService {
                 .orElseThrow(() -> new CustomException(CustomException.ErrorCode.INVALID_CREDENTIALS));
     }
 
-    public Optional<User> getUserInfo(String email) {
-        return userRepository.findByEmail(email);
+    public Optional<User> getUserInfo(String nickname) {
+        return userRepository.findByNickname(nickname);
     }
 }
