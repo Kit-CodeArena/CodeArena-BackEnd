@@ -39,8 +39,8 @@ public class CustomException extends RuntimeException {
         POST_NOT_FOUND("게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         IMAGE_PROCESSING_FAILED("이미지 처리 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),
-        ACCESS_DENIED("접근이 거부되었습니다.", HttpStatus.FORBIDDEN);
-
+        ACCESS_DENIED("접근이 거부되었습니다.", HttpStatus.FORBIDDEN),
+        INVALID_INPUT_VALUE_DTO("dto 매핑 변수가 맞지않음", HttpStatus.BAD_REQUEST);
 
         private final String message;
         @Getter

@@ -4,6 +4,7 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_
 
 import com.example.codeArena.chatting.domain.ChatRoom;
 import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
+import com.example.codeArena.chatting.dto.ChatRoomDto;
 import com.example.codeArena.chatting.service.ChatService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
@@ -39,7 +40,7 @@ public class ChatController {
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping("/room")
-    public ChatRoom createRoom(@RequestBody @Valid ChatRoomCreateRequest request){
+    public ChatRoomDto createRoom(@RequestBody @Valid ChatRoomCreateRequest request){
         // 토큰 확인 & 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
