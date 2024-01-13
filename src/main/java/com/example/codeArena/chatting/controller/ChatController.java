@@ -4,7 +4,7 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_
 
 import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
 import com.example.codeArena.chatting.dto.ChatRoomDto;
-import com.example.codeArena.chatting.service.ChatService;
+import com.example.codeArena.chatting.service.ChatRoomService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -23,7 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/api/test/chat")
 public class ChatController {
-    private final ChatService chatService;
+    private final ChatRoomService chatService;
 
     // 모든 채팅방 목록
     @GetMapping("/rooms")
