@@ -1,6 +1,6 @@
-package com.example.codeArena.chatting.dto;
+package com.example.codeArena.chat.dto;
 
-import com.example.codeArena.chatting.domain.Tag;
+import com.example.codeArena.chat.domain.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;

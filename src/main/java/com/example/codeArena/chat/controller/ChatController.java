@@ -1,10 +1,10 @@
-package com.example.codeArena.chatting.controller;
+package com.example.codeArena.chat.controller;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_CONTEXT;
 
-import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
-import com.example.codeArena.chatting.dto.ChatRoomDto;
-import com.example.codeArena.chatting.service.ChatRoomService;
+import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
+import com.example.codeArena.chat.dto.ChatRoomDto;
+import com.example.codeArena.chat.service.ChatRoomService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;

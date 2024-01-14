@@ -1,11 +1,11 @@
-package com.example.codeArena.chatting.controller;
+package com.example.codeArena.chat.controller;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_NOT_FOUND;
 
-import com.example.codeArena.chatting.domain.ChatMessage;
-import com.example.codeArena.chatting.domain.ChatMessage.MessageType;
-import com.example.codeArena.chatting.domain.ChatRoom;
-import com.example.codeArena.chatting.repository.ChatRoomRepository;
+import com.example.codeArena.chat.domain.ChatMessage;
+import com.example.codeArena.chat.domain.ChatMessage.MessageType;
+import com.example.codeArena.chat.domain.ChatRoom;
+import com.example.codeArena.chat.repository.ChatRoomRepository;
 import com.example.codeArena.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

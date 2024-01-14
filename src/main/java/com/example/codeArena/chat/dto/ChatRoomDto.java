@@ -1,7 +1,7 @@
-package com.example.codeArena.chatting.dto;
+package com.example.codeArena.chat.dto;
 
-import com.example.codeArena.chatting.domain.ChatRoom;
-import com.example.codeArena.chatting.domain.Tag;
+import com.example.codeArena.chat.domain.ChatRoom;
+import com.example.codeArena.chat.domain.Tag;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

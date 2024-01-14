@@ -1,4 +1,4 @@
-package com.example.codeArena.chatting.service;
+package com.example.codeArena.chat.service;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_ALREADY_EXIST;
 import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_INPUT_VALUE_DTO;
@@ -6,10 +6,10 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT
 
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
-import com.example.codeArena.chatting.domain.ChatRoom;
-import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
-import com.example.codeArena.chatting.dto.ChatRoomDto;
-import com.example.codeArena.chatting.repository.ChatRoomRepository;
+import com.example.codeArena.chat.domain.ChatRoom;
+import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
+import com.example.codeArena.chat.dto.ChatRoomDto;
+import com.example.codeArena.chat.repository.ChatRoomRepository;
 import com.example.codeArena.exception.CustomException;
 import java.util.List;
 import java.util.Optional;

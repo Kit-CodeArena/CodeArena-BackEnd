@@ -1,4 +1,4 @@
-package com.example.codeArena.chatting.domain;
+package com.example.codeArena.chat.domain;
 
 import com.example.codeArena.User.model.User;
 import jakarta.persistence.Entity;

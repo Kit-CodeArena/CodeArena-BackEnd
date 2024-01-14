@@ -1,7 +1,7 @@
-package com.example.codeArena.chatting.domain;
+package com.example.codeArena.chat.domain;
 
 import com.example.codeArena.User.model.User;
-import com.example.codeArena.chatting.dto.ChatRoomCreateRequest;
+import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
