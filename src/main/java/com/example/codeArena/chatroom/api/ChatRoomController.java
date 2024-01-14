@@ -27,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/test/chat")
+@RequestMapping("/api/test")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
@@ -37,7 +37,7 @@ public class ChatRoomController {
      * 현재는 ADMIN 권한을 가진 사람만 생성 가능
      */
     @PreAuthorize("hasRole('ADMIN')")
-    @PostMapping("/room")
+    @PostMapping(value = "/room")
     public ChatRoomDto createRoom(@RequestBody @Valid ChatRoomCreateRequest request){
         // 토큰 확인 & 정보 추출
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -48,7 +48,7 @@ public class ChatRoomController {
     }
 
     // 모든 채팅방 목록
-    @GetMapping("/rooms")
+    @GetMapping(value = "/rooms")
     public List<ChatRoomDto> findAllRoom() {
         return chatRoomService.findAllRooms();
     }
