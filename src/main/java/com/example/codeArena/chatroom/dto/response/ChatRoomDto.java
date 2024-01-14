@@ -1,7 +1,9 @@
-package com.example.codeArena.chat.dto;
+package com.example.codeArena.chatroom.dto.response;
 
-import com.example.codeArena.chat.domain.ChatRoom;
-import com.example.codeArena.chat.domain.Tag;
+import com.example.codeArena.chatroom.domain.ChatRoom;
+import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;
+import com.example.codeArena.chatroom.domain.vo.Tag;
+import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import java.time.LocalDateTime;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,17 +17,17 @@ public class ChatRoomDto {
     private int maxUserNum;
     private int curUserNum;
     private Tag tag;
-    private LocalDateTime createTime;
-    private String userNickName;
+    private ChatRoomStatus status;
+    private LocalDateTime createAt;
 
     public ChatRoomDto(ChatRoom chatRoom) {
         this.id = chatRoom.getId();
         this.roomId = chatRoom.getRoomId();
         this.name = chatRoom.getName();
         this.maxUserNum = chatRoom.getMaxUserNum();
-        this.curUserNum = chatRoom.getCurUserNum();
+        this.curUserNum = chatRoom.getChatRoomUsers().size();
         this.tag = chatRoom.getTag();
-        this.createTime = chatRoom.getCreateTime();
-        this.userNickName = chatRoom.getUser().getNickname();
+        this.status = chatRoom.getStatus();
+        this.createAt = chatRoom.getCreatedAt();
     }
 }

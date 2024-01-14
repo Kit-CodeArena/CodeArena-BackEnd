@@ -1,10 +1,10 @@
-package com.example.codeArena.chat.controller;
+package com.example.codeArena.chatroom.api;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_CONTEXT;
 
-import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
-import com.example.codeArena.chat.dto.ChatRoomDto;
-import com.example.codeArena.chat.service.ChatRoomService;
+import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;
+import com.example.codeArena.chatroom.dto.response.ChatRoomDto;
+import com.example.codeArena.chatroom.service.ChatRoomService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -22,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 @RestController
 @RequestMapping("/api/test/chat")
-public class ChatController {
+public class ChatRoomController {
     private final ChatRoomService chatService;
 
     // 모든 채팅방 목록

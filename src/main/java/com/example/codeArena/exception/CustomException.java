@@ -30,6 +30,7 @@ public class CustomException extends RuntimeException {
         // 400 BAD_REQUEST : 잘못된 요청
         INVALID_INPUT_VALUE("잘못된 입력 값 입니다.", HttpStatus.BAD_REQUEST),
         INVALID_INPUT_VALUE_DTO("dto 매핑 변수가 맞지않음", HttpStatus.BAD_REQUEST),
+        CHAT_ROOM_USER_ILLEGAL_ROLE("올바르지 않는 채팅 방 유저의 권한입니다.", HttpStatus.BAD_REQUEST),
 
         // 401 UNAUTHORIZED : 인증되지 않은 사용자
         INVALID_CREDENTIALS("잘못된 이메일 또는 비밀번호입니다.", HttpStatus.UNAUTHORIZED),

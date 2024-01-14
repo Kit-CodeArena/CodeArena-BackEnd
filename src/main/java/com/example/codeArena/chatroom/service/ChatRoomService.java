@@ -1,15 +1,16 @@
-package com.example.codeArena.chat.service;
+package com.example.codeArena.chatroom.service;
 
-import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_ALREADY_EXIST;
 import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_INPUT_VALUE_DTO;
 import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT_FOUND;
 
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
-import com.example.codeArena.chat.domain.ChatRoom;
-import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
-import com.example.codeArena.chat.dto.ChatRoomDto;
-import com.example.codeArena.chat.repository.ChatRoomRepository;
+import com.example.codeArena.chatroom.domain.ChatRoom;
+import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;
+import com.example.codeArena.chatroom.dto.response.ChatRoomDto;
+import com.example.codeArena.chatroom.repository.ChatRoomRepository;
+import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
+import com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole;
 import com.example.codeArena.exception.CustomException;
 import java.util.List;
 import java.util.Optional;
@@ -30,13 +31,16 @@ public class ChatRoomService {
     public ChatRoomDto createRoom(ChatRoomCreateRequest dto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        if (chatRoomRepository.existsByUser(user)) { // 사용자와 관련된 방이 이미 존재하는지 확인
-            throw new CustomException(CHAT_ROOM_ALREADY_EXIST);
-        }
+        ChatRoom chatRoom = ChatRoom.create(dto);
 
-        ChatRoom chatRoom = ChatRoom.create(dto, user);
+        ChatRoomUser chatRoomUser = ChatRoomUser.builder()
+                .userId(user.getId())
+                .chatRoom(chatRoom)
+                .chatRoomUserRole(ChatRoomUserRole.LEADER)
+                .build();
+        chatRoom.addRoomMember(chatRoomUser);
+
         ChatRoom createdChatRoom = chatRoomRepository.save(chatRoom);
-
         ChatRoomDto response = Optional.of(createdChatRoom)
                 .map(ChatRoomDto::new)
                 .orElseThrow(()->new CustomException(INVALID_INPUT_VALUE_DTO));
@@ -45,7 +49,6 @@ public class ChatRoomService {
     }
 
     // 모든 채팅방 조회
-    @Transactional(readOnly = true)
     public List<ChatRoomDto> findAllRooms() {
         List<ChatRoom> chatRooms = chatRoomRepository.findAll();
         return chatRooms.stream()
