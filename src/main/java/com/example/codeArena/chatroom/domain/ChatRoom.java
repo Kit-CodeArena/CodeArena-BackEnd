@@ -1,7 +1,10 @@
-package com.example.codeArena.chat.domain;
+package com.example.codeArena.chatroom.domain;
 
 import com.example.codeArena.User.model.User;
+import com.example.codeArena.chat.domain.ChatRoomUser;
+import com.example.codeArena.chat.domain.Tag;
 import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
+import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -46,13 +49,17 @@ public class ChatRoom {
     @Enumerated(EnumType.STRING)
     private Tag tag;
 
+    @Column(nullable = false, length = 255)
+    @Enumerated(EnumType.STRING)
+    private ChatRoomStatus status;
+
     @Column(name = "create_time")
     private LocalDateTime createTime;
 
     @OneToOne // 사용자는 권한을 얻으면 채팅방을 1개만 만들 수 있게 한다.
     private User user;
 
-    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
     private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
 
 
