@@ -7,13 +7,17 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.chatroom.domain.ChatRoom;
+import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;
 import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;
 import com.example.codeArena.chatroom.dto.response.ChatRoomDetailDto;
 import com.example.codeArena.chatroom.dto.response.ChatRoomDto;
+import com.example.codeArena.chatroom.dto.response.ChatRoomStatusResponse;
 import com.example.codeArena.chatroom.repository.ChatRoomRepository;
+import com.example.codeArena.chatroom.strategy.ChatRoomStatusUpdater;
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole;
 import com.example.codeArena.chatroomuser.dto.response.ChatRoomUserResponse;
+import com.example.codeArena.chatroomuser.repository.ChatRoomUserRepository;
 import com.example.codeArena.exception.CustomException;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +33,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class ChatRoomService {
     private final UserRepository userRepository;
     private final ChatRoomRepository chatRoomRepository;
+    private final ChatRoomUserRepository chatRoomUserRepository;
+    private final ChatRoomStatusUpdater chatRoomStatusUpdater;
 
     // 채팅방 생성
     @Transactional
@@ -73,5 +79,17 @@ public class ChatRoomService {
         return ChatRoomDetailDto.of(chatRoom, users);
     }
 
+    // 상태 변경
+    @Transactional
+    public ChatRoomStatusResponse updateStatus(String roomId, Long userId, ChatRoomStatus status) {
+        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findChatRoomUsersByUserIdAndChatRoomId(userId, chatRoom.getId())
+                .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
+        chatRoomUser.isNotLeader(); // leader 인지 체크
+
+        chatRoomStatusUpdater.updateStatus(chatRoom, chatRoomUser, status);
+
+        return new ChatRoomStatusResponse(chatRoom.getStatus());
+    }
 }

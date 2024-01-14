@@ -1,9 +1,13 @@
 package com.example.codeArena.chatroom.domain;
 
+import static com.example.codeArena.exception.CustomException.ErrorCode.IS_NOT_CLOSE;
+import static com.example.codeArena.exception.CustomException.ErrorCode.IS_NOT_OPENING;
+
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import com.example.codeArena.chatroom.domain.vo.Tag;
 import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;
 import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;
+import com.example.codeArena.exception.CustomException;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -70,5 +74,21 @@ public class ChatRoom {
 
     public void addRoomMember(ChatRoomUser chatRoomUser){
         chatRoomUsers.add(chatRoomUser);
+    }
+
+    public void changeStatus(ChatRoomStatus status) {
+        this.status = status;
+    }
+
+    public void isNotOpening() {
+        if (!(this.status == ChatRoomStatus.OPEN)) {
+            throw new CustomException(IS_NOT_OPENING);
+        }
+    }
+
+    public void isNotClose() {
+        if (!(this.status == ChatRoomStatus.CLOSE)) {
+            throw new CustomException(IS_NOT_CLOSE);
+        }
     }
 }
