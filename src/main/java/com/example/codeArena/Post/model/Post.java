@@ -41,6 +41,7 @@ public class Post {
     private List<Long> comments = new ArrayList<>(); // 댓글 ID 목록 (Comment 모델의 ID와 연결)
 
     @Lob
+    @Column(name = "image", columnDefinition="LONGBLOB")
     private byte[] image; // 이미지 데이터
 
     public Post(String title, String content, Long authorId, String authorNickname, Set<String> tags) {
