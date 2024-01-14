@@ -1,9 +1,8 @@
 package com.example.codeArena.chatroom.domain;
 
-import com.example.codeArena.User.model.User;
-import com.example.codeArena.chat.domain.ChatRoomUser;
-import com.example.codeArena.chat.domain.Tag;
-import com.example.codeArena.chat.dto.ChatRoomCreateRequest;
+import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
+import com.example.codeArena.chatroom.domain.vo.Tag;
+import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;
 import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -14,7 +13,6 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -23,6 +21,7 @@ import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Setter
@@ -43,9 +42,6 @@ public class ChatRoom {
     @Column(name = "max_user_num", nullable = false)
     private int maxUserNum;
 
-    @Column(name = "cur_user_num")
-    private int curUserNum;
-
     @Enumerated(EnumType.STRING)
     private Tag tag;
 
@@ -53,25 +49,26 @@ public class ChatRoom {
     @Enumerated(EnumType.STRING)
     private ChatRoomStatus status;
 
-    @Column(name = "create_time")
-    private LocalDateTime createTime;
-
-    @OneToOne // 사용자는 권한을 얻으면 채팅방을 1개만 만들 수 있게 한다.
-    private User user;
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
 
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
     private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
 
 
-    public static ChatRoom create(ChatRoomCreateRequest dto, User user) {
+    public static ChatRoom create(ChatRoomCreateRequest dto) {
         ChatRoom room = new ChatRoom();
         room.roomId = UUID.randomUUID().toString();
         room.name = dto.getName();
         room.maxUserNum = dto.getMaxUserNum();
-        room.curUserNum = 0; // 초기값 설정
         room.tag = dto.getTag();
-        room.createTime = LocalDateTime.now();
-        room.user = user;
+        room.status = ChatRoomStatus.OPEN;
+        room.createdAt = LocalDateTime.now();
         return room;
+    }
+
+    public void addRoomMember(ChatRoomUser chatRoomUser){
+        chatRoomUsers.add(chatRoomUser);
     }
 }
