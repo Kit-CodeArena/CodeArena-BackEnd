@@ -34,6 +34,7 @@ public class CustomException extends RuntimeException {
         IS_NOT_OPENING("'모집 중' 상태가 아닙니다.", HttpStatus.BAD_REQUEST),
         IS_NOT_CLOSE("'모집 종료' 상태가 아닙니다.", HttpStatus.BAD_REQUEST),
         INVALID_STRATEGY("잘못된 전략 입니다.", HttpStatus.BAD_REQUEST),
+        WEB_SOCKET_SA_NULL("SessionAttributes가 null입니다.", HttpStatus.BAD_REQUEST),
 
         // 401 UNAUTHORIZED : 인증되지 않은 사용자
         INVALID_CREDENTIALS("잘못된 이메일 또는 비밀번호입니다.", HttpStatus.UNAUTHORIZED),
@@ -44,12 +45,14 @@ public class CustomException extends RuntimeException {
         ACCESS_DENIED("접근이 거부되었습니다.", HttpStatus.FORBIDDEN),
 
         // 404 NOT_FOUND : Resource 를 찾을 수 없음
+        VALUE_NOT_FOUNE("값을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         USER_NOT_FOUND("사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         PROBLEM_NOT_FOUND("문제를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         POST_NOT_FOUND("게시글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         COMMENT_NOT_FOUND("댓글을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         CHAT_ROOM_NOT_FOUND("채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         CHAT_ROOM_USER_NOT_FOUND("채팅방에서 해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
+        AUTH_HEADER_NOT_FOUND("authHeaderValue가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
 
         // 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
         EMAIL_ALREADY_EXISTS("이미 사용 중인 이메일입니다.", HttpStatus.CONFLICT),
