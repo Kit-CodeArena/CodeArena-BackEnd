@@ -35,6 +35,7 @@ public class ChatRoomController {
      * TODO : ADMIN 이 아닌 채팅방을 생성할 수 있는 다른 권한으로 변환 필요
      * 채팅방 생성
      * 현재는 ADMIN 권한을 가진 사람만 생성 가능
+     * TODO 2 - 대회용 문제 제출 여/부 확인 추가
      */
     @PreAuthorize("hasRole('ADMIN')")
     @PostMapping(value = "/room")
