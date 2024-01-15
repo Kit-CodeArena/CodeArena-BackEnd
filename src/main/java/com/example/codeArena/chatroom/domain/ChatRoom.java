@@ -37,9 +37,6 @@ public class ChatRoom {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "room_id", nullable = false, unique = true)
-    private String roomId;
-
     @Column(nullable = false, length = 30)
     private String name;
 
@@ -63,7 +60,6 @@ public class ChatRoom {
 
     public static ChatRoom create(ChatRoomCreateRequest dto) {
         ChatRoom room = new ChatRoom();
-        room.roomId = UUID.randomUUID().toString();
         room.name = dto.getName();
         room.maxUserNum = dto.getMaxUserNum();
         room.tag = dto.getTag();

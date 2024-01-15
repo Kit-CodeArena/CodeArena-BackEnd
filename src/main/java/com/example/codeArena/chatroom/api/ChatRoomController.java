@@ -62,7 +62,7 @@ public class ChatRoomController {
      * 특정 채팅방 조회
      */
     @GetMapping(value = "/room/{roomId}")
-    public ResponseEntity<?> getById(@PathVariable String roomId) {
+    public ResponseEntity<?> getById(@PathVariable Long roomId) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
             throw new CustomException(INVALID_CONTEXT);
@@ -78,7 +78,7 @@ public class ChatRoomController {
     @PreAuthorize("hasRole('ADMIN')")
     @PatchMapping(value = "/room/{roomId}")
     public ResponseEntity<?> updateStatus(
-            @PathVariable String roomId,
+            @PathVariable Long roomId,
             @RequestBody @Valid UpdateChatRoomStatus dto) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
