@@ -1,4 +1,4 @@
-package com.example.codeArena.chatting.domain;
+package com.example.codeArena.chat.domain;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class ChatMessage {
     public enum MessageType {
-        ENTER, TALK
+        ENTER, TALK, ERROR
     }
 
     private MessageType type;

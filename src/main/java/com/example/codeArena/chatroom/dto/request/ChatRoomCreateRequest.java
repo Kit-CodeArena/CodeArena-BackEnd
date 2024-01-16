@@ -1,6 +1,6 @@
-package com.example.codeArena.chatting.dto;
+package com.example.codeArena.chatroom.dto.request;
 
-import com.example.codeArena.chatting.domain.Tag;
+import com.example.codeArena.chatroom.domain.vo.Tag;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -12,6 +12,7 @@ import lombok.Getter;
 public class ChatRoomCreateRequest {
     @NotBlank(message = "제목을 입력해주세요.")
     @Size(min = 1, message = "내용은 1자 이상이여야 합니다.")
+    @Size(max = 30, message = "내용은 30자 이하여야 합니다.")
     private String name;
 
     @NotNull(message = "최대 인원을 설정해주세요.")
