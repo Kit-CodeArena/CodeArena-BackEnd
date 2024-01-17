@@ -67,8 +67,8 @@ public class ChatRoomService {
     }
 
     // 특정 채팅방 조회
-    public ChatRoomDetailDto getByUserId(Long userId, String roomId) {
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
+    public ChatRoomDetailDto getByUserId(Long userId, Long roomId) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
         List<ChatRoomUserResponse> users = chatRoom.getChatRoomUsers()
@@ -81,8 +81,8 @@ public class ChatRoomService {
 
     // 상태 변경
     @Transactional
-    public ChatRoomStatusResponse updateStatus(String roomId, Long userId, ChatRoomStatus status) {
-        ChatRoom chatRoom = chatRoomRepository.findByRoomId(roomId).orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
+    public ChatRoomStatusResponse updateStatus(Long roomId, Long userId, ChatRoomStatus status) {
+        ChatRoom chatRoom = chatRoomRepository.findById(roomId).orElseThrow(() -> new CustomException(CHAT_ROOM_NOT_FOUND));
         ChatRoomUser chatRoomUser = chatRoomUserRepository.findChatRoomUsersByUserIdAndChatRoomId(userId, chatRoom.getId())
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 

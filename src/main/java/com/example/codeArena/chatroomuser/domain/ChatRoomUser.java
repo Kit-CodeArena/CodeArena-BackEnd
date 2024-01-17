@@ -72,7 +72,7 @@ public class ChatRoomUser {
         }
     }
 
-    public boolean isMember() {
+    public boolean isUser() {
         return this.chatRoomUserRole == USER;
     }
 
