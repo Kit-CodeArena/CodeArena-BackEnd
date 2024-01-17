@@ -5,18 +5,22 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_
 
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.proposal.dto.request.CreateProposalRequest;
+import com.example.codeArena.proposal.dto.request.UpdateProposalRequest;
 import com.example.codeArena.proposal.service.ProposalService;
 import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;
 import java.net.URI;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -62,7 +66,22 @@ public class ProposalController {
 
     /**
      * 신청서 수락
+     * TODO : 방을 만들 수 있는 권한 체크 (현재는 ADMIN)
      */
+    @PreAuthorize("hasRole('ADMIN')")
+    @PatchMapping(value = "/proposals/{proposalId}")
+    public void changeProposalStatus
+    (
+            @PathVariable Long proposalId,
+            @RequestBody @Valid UpdateProposalRequest proposalRequest
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
+            throw new CustomException(INVALID_CONTEXT);
+        }
+        proposalService.updateProposalStatus(proposalRequest, user.getId(), proposalId);
+    }
+
 
     /**
      * 신청서 거절

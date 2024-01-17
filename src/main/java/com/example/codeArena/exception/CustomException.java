@@ -56,6 +56,7 @@ public class CustomException extends RuntimeException {
         CHAT_ROOM_NOT_FOUND("채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         CHAT_ROOM_USER_NOT_FOUND("채팅방에서 해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         AUTH_HEADER_NOT_FOUND("authHeaderValue가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+        PROPOSAL_NOT_FOUND("해당 신청서를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
         // 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
         EMAIL_ALREADY_EXISTS("이미 사용 중인 이메일입니다.", HttpStatus.CONFLICT),

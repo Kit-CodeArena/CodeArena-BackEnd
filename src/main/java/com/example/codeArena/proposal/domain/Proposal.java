@@ -1,5 +1,6 @@
 package com.example.codeArena.proposal.domain;
 
+import static com.example.codeArena.proposal.domain.vo.ProposalStatus.APPROVE;
 import static jakarta.persistence.FetchType.LAZY;
 
 import com.example.codeArena.User.model.User;
@@ -15,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -51,5 +53,13 @@ public class Proposal {
         this.chatRoomId = roomId;
         this.content = content;
         this.status = ProposalStatus.WAITING;
+    }
+
+    public boolean isApprove(ProposalStatus statusName) {
+        return Objects.equals(statusName, APPROVE);
+    }
+
+    public void changeProposalStatus(ProposalStatus status) {
+        this.status = status;
     }
 }
