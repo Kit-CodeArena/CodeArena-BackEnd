@@ -4,6 +4,7 @@ import static jakarta.persistence.FetchType.LAZY;
 
 import com.example.codeArena.User.model.User;
 import com.example.codeArena.proposal.domain.vo.ProposalStatus;
+import com.example.codeArena.proposal.dto.request.CreateProposalRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
@@ -14,10 +15,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @Entity
+@NoArgsConstructor
 @Table(name = "proposals")
 public class Proposal {
 
@@ -31,7 +35,7 @@ public class Proposal {
 
     private Long leaderId;
 
-    private Long roomId;
+    private Long chatRoomId;
 
     @Column(nullable = false, length = 100)
     private String content;
@@ -40,4 +44,12 @@ public class Proposal {
     @Enumerated(EnumType.STRING)
     private ProposalStatus status;
 
+    @Builder
+    public Proposal(User user, Long leaderId, Long roomId, String content, ProposalStatus status) {
+        this.user = user;
+        this.leaderId = leaderId;
+        this.chatRoomId = roomId;
+        this.content = content;
+        this.status = ProposalStatus.WAITING;
+    }
 }
