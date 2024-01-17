@@ -12,7 +12,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class ChatRoomDto {
     private Long id;
-    private String roomId;
     private String name;
     private int maxUserNum;
     private int curUserNum;
@@ -22,7 +21,6 @@ public class ChatRoomDto {
 
     public ChatRoomDto(ChatRoom chatRoom) {
         this.id = chatRoom.getId();
-        this.roomId = chatRoom.getRoomId();
         this.name = chatRoom.getName();
         this.maxUserNum = chatRoom.getMaxUserNum();
         this.curUserNum = chatRoom.getChatRoomUsers().size();

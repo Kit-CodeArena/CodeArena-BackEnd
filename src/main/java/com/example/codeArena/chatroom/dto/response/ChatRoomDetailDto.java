@@ -13,7 +13,6 @@ import lombok.Getter;
 @Builder
 public class ChatRoomDetailDto {
     private Long id;
-    private String roomId;
     private String name;
     private int maxUserNum;
     private int curUserNum;
@@ -25,7 +24,6 @@ public class ChatRoomDetailDto {
     public static ChatRoomDetailDto of(ChatRoom chatRoom, List<ChatRoomUserResponse> users) {
         return ChatRoomDetailDto.builder()
                 .id(chatRoom.getId())
-                .roomId(chatRoom.getRoomId())
                 .name(chatRoom.getName())
                 .maxUserNum(chatRoom.getMaxUserNum())
                 .curUserNum(chatRoom.getChatRoomUsers().size())
