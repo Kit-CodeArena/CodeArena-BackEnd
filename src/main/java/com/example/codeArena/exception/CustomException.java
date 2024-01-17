@@ -35,11 +35,14 @@ public class CustomException extends RuntimeException {
         IS_NOT_CLOSE("'모집 종료' 상태가 아닙니다.", HttpStatus.BAD_REQUEST),
         INVALID_STRATEGY("잘못된 전략 입니다.", HttpStatus.BAD_REQUEST),
         WEB_SOCKET_SA_NULL("SessionAttributes가 null입니다.", HttpStatus.BAD_REQUEST),
+        INVALID_PROPOSAL_STATUS("잘못된 신청서 상태입니다.", HttpStatus.BAD_REQUEST),
+
 
         // 401 UNAUTHORIZED : 인증되지 않은 사용자
         INVALID_CREDENTIALS("잘못된 이메일 또는 비밀번호입니다.", HttpStatus.UNAUTHORIZED),
         INVALID_CONTEXT("Security Context 에 인증 정보가 없습니다.", HttpStatus.UNAUTHORIZED),
         JWT_VALIDATION_FAILED("JWT 토큰 검증 실패", HttpStatus.UNAUTHORIZED),
+
 
         // 403
         ACCESS_DENIED("접근이 거부되었습니다.", HttpStatus.FORBIDDEN),
