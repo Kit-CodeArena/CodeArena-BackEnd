@@ -41,7 +41,7 @@ public class ChatRoomService {
     public ChatRoomDto createRoom(ChatRoomCreateRequest dto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        ChatRoom chatRoom = ChatRoom.create(dto);
+        ChatRoom chatRoom = ChatRoom.create(dto, user);
 
         ChatRoomUser chatRoomUser = ChatRoomUser.builder()
                 .user(user)
