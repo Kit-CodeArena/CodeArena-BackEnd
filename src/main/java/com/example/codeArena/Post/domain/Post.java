@@ -20,6 +20,7 @@ public class Post {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+
     private String title;
     private String content;
 
@@ -35,7 +36,7 @@ public class Post {
     private int views;
 
     @JsonBackReference
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER) // FetchType.EAGER로 변경
     @JoinColumn(name = "author_id", referencedColumnName = "id")
     private User author;
 

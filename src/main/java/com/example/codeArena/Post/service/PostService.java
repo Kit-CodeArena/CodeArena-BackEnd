@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class PostService {
@@ -179,5 +180,12 @@ public class PostService {
         dto.setLikes(post.getLikedUsers().size()); // 좋아요 수 설정
         dto.setIsLikedByCurrentUser(isLikedByCurrentUser); // 현재 사용자의 좋아요 상태 설정
         return dto;
+    }
+
+    public List<PostResponseDto> convertToDtoList(List<Post> posts) {
+        return posts.stream().map(post -> {
+            // 각 게시글을 PostResponseDto로 변환
+            return convertToDto(post, false); // 'false'는 사용자의 좋아요 상태를 나타냅니다. 필요에 따라 수정할 수 있습니다.
+        }).collect(Collectors.toList());
     }
 }

@@ -51,8 +51,10 @@ public class PostController {
 
     // 게시글 전체 조회
     @GetMapping
-    public ResponseEntity<List<Post>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<List<PostResponseDto>> getAllPosts() {
+        List<Post> posts = postService.getAllPosts();
+        List<PostResponseDto> postDtos = postService.convertToDtoList(posts);
+        return ResponseEntity.ok(postDtos);
     }
 
     // 특정 게시글 조회
