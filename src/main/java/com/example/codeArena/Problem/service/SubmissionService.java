@@ -1,7 +1,7 @@
 package com.example.codeArena.Problem.service;
 
 import com.example.codeArena.Problem.dto.SubmissionDto;
-import com.example.codeArena.Problem.model.Submission;
+import com.example.codeArena.Problem.domain.Submission;
 import com.example.codeArena.Problem.repository.SubmissionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;

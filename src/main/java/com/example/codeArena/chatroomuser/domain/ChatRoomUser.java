@@ -5,7 +5,7 @@ import static com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole.LEAD
 import static com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole.USER;
 import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_USER_ILLEGAL_ROLE;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.chatroom.domain.ChatRoom;
 import com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole;
 import com.example.codeArena.exception.CustomException;
@@ -23,7 +23,6 @@ import java.time.LocalDateTime;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 @Getter

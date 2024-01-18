@@ -1,6 +1,6 @@
 package com.example.codeArena.proposal.dto.request;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.proposal.domain.Proposal;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

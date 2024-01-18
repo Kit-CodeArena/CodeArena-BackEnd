@@ -4,7 +4,7 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROO
 import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_INPUT_VALUE_DTO;
 import static com.example.codeArena.exception.CustomException.ErrorCode.PROPOSAL_ALREADY_EXIST;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.chatroom.domain.ChatRoom;
 import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;

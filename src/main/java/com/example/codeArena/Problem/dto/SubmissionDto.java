@@ -1,6 +1,6 @@
 package com.example.codeArena.Problem.dto;
 
-import com.example.codeArena.Problem.model.Submission.SubmissionStatus;
+import com.example.codeArena.Problem.domain.Submission.SubmissionStatus;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

@@ -3,7 +3,7 @@ package com.example.codeArena.Problem.service;
 import com.example.codeArena.Problem.dto.ProblemCreateDto;
 import com.example.codeArena.Problem.dto.ProblemDto;
 import com.example.codeArena.Problem.dto.ProblemUpdateDto;
-import com.example.codeArena.Problem.model.Problem;
+import com.example.codeArena.Problem.domain.Problem;
 import com.example.codeArena.Problem.repository.ProblemRepository;
 import com.example.codeArena.exception.CustomException;
 import static com.example.codeArena.exception.CustomException.ErrorCode;
@@ -120,7 +120,7 @@ public class ProblemService {
     // DTO 데이터에서 문제 필드 설정
     private void setProblemFieldsFromDto(Problem problem, String title, String description,
                                          String difficulty, String inputFormat, String outputFormat,
-                                         String sampleInput, String sampleOutput, Integer timeLimit,
+                                         String sampleInput, String sampleOutput, Double timeLimit,
                                          Integer memoryLimit, String category, List<String> tags) {
         problem.setTitle(title);
         problem.setDescription(description);

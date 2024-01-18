@@ -3,9 +3,8 @@ package com.example.codeArena.proposal.domain;
 import static com.example.codeArena.proposal.domain.vo.ProposalStatus.APPROVE;
 import static jakarta.persistence.FetchType.LAZY;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.proposal.domain.vo.ProposalStatus;
-import com.example.codeArena.proposal.dto.request.CreateProposalRequest;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;

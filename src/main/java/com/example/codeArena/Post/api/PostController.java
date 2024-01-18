@@ -1,7 +1,7 @@
-package com.example.codeArena.Post.controller;
+package com.example.codeArena.Post.api;
 
 import com.example.codeArena.Post.dto.PostCreateDto;
-import com.example.codeArena.Post.model.Post;
+import com.example.codeArena.Post.domain.Post;
 import com.example.codeArena.Post.service.PostService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
@@ -36,12 +36,7 @@ public class PostController {
                                            @RequestParam("content") String content,
                                            @RequestParam("tags") Set<String> tags,
                                            @RequestParam(value = "image", required = false) MultipartFile image) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
-            throw new CustomException(CustomException.ErrorCode.INVALID_CONTEXT);
-        }
-
-        UserPrincipal currentUser = (UserPrincipal) authentication.getPrincipal();
+        UserPrincipal currentUser = getCurrentUser();
         PostCreateDto createDto = new PostCreateDto(title, content, currentUser.getId(), currentUser.getNickname(), tags);
 
         try {
@@ -141,6 +136,7 @@ public class PostController {
                 .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
         return ResponseEntity.ok(updatedPost);
     }
+
     private UserPrincipal getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
