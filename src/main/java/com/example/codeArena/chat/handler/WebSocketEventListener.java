@@ -13,6 +13,7 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.stereotype.Component;
 import org.springframework.web.socket.messaging.SessionConnectedEvent;
+import org.springframework.web.socket.messaging.SessionDisconnectEvent;
 import org.springframework.web.socket.messaging.SessionSubscribeEvent;
 
 @Slf4j
@@ -43,6 +44,24 @@ public class WebSocketEventListener {
         messagingTemplate.convertAndSend("/topic/public/" + roomId, chatRequest);
 
     }
+
+    // 연결 해제
+    @EventListener
+    public void handleWebSocketDisconnectListener(SessionDisconnectEvent event) {
+        StompHeaderAccessor accessor = StompHeaderAccessor.wrap(event.getMessage());
+
+        String username = (String)getValue(accessor, "username");
+        Long userId = (Long)getValue(accessor, "userId");
+        Long roomId = (Long)getValue(accessor, "roomId");
+
+        log.info("User: {} {} Disconnected Crew : {}", userId, username, roomId);
+
+        ChatRequest chatRequest = new ChatRequest(
+                MessageType.LEAVE, userId, username + " 님이 떠났습니다.");
+
+        messagingTemplate.convertAndSend("/topic/public/" + roomId, chatRequest);
+    }
+
     private Object getValue(StompHeaderAccessor accessor, String key) {
         Map<String, Object> sessionAttributes = getSessionAttributes(accessor);
         Object value = sessionAttributes.get(key);
