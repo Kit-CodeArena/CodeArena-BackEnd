@@ -22,14 +22,17 @@ public class Chat {
 
     private Long userId;
 
+    private String userNickname;
+
     private MessageType messageType;
 
     private String content;
 
     @Builder
-    public Chat(Long roomId, Long userId, MessageType messageType, String content) {
+    public Chat(Long roomId, Long userId, String userNickname, MessageType messageType, String content) {
         this.roomId = roomId;
         this.userId = userId;
+        this.userNickname = userNickname;
         this.messageType = messageType;
         this.content = content;
     }
