@@ -1,7 +1,7 @@
 package com.example.codeArena.Post.service;
 
 import com.example.codeArena.Post.dto.CommentCreateDto;
-import com.example.codeArena.Post.model.Comment;
+import com.example.codeArena.Post.domain.Comment;
 import com.example.codeArena.Post.repository.CommentRepository;
 import com.example.codeArena.exception.CustomException;
 import org.springframework.beans.factory.annotation.Autowired;

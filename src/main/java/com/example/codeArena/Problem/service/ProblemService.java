@@ -3,7 +3,7 @@ package com.example.codeArena.Problem.service;
 import com.example.codeArena.Problem.dto.ProblemCreateDto;
 import com.example.codeArena.Problem.dto.ProblemDto;
 import com.example.codeArena.Problem.dto.ProblemUpdateDto;
-import com.example.codeArena.Problem.model.Problem;
+import com.example.codeArena.Problem.domain.Problem;
 import com.example.codeArena.Problem.repository.ProblemRepository;
 import com.example.codeArena.exception.CustomException;
 import static com.example.codeArena.exception.CustomException.ErrorCode;

@@ -1,4 +1,4 @@
-package com.example.codeArena.Post.model;
+package com.example.codeArena.Post.domain;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;

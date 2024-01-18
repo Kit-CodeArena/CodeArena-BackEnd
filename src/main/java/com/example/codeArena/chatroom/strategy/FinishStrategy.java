@@ -1,12 +1,8 @@
 package com.example.codeArena.chatroom.strategy;
 
-import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT_FOUND;
-
-import com.example.codeArena.User.model.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.chatroom.domain.ChatRoom;
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
-import com.example.codeArena.exception.CustomException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;

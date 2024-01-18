@@ -3,7 +3,7 @@ package com.example.codeArena.chatroom.domain;
 import static com.example.codeArena.exception.CustomException.ErrorCode.IS_NOT_CLOSE;
 import static com.example.codeArena.exception.CustomException.ErrorCode.IS_NOT_OPENING;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import com.example.codeArena.chatroom.domain.vo.Tag;
 import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;

@@ -1,4 +1,4 @@
-package com.example.codeArena.User.model;
+package com.example.codeArena.User.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

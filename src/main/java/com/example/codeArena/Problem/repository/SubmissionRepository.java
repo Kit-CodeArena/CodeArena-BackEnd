@@ -1,6 +1,6 @@
 package com.example.codeArena.Problem.repository;
 
-import com.example.codeArena.Problem.model.Submission;
+import com.example.codeArena.Problem.domain.Submission;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
 import java.util.List;
