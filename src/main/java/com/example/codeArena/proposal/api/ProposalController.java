@@ -6,6 +6,7 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.proposal.dto.request.CreateProposalRequest;
 import com.example.codeArena.proposal.dto.request.UpdateProposalRequest;
+import com.example.codeArena.proposal.dto.response.ProposalResponse;
 import com.example.codeArena.proposal.service.ProposalService;
 import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;
@@ -15,6 +16,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,6 +57,16 @@ public class ProposalController {
     /**
      * 신청서 하나 조회
      */
+    @GetMapping(value = "/proposals/{proposalId}")
+    public ResponseEntity<ProposalResponse> findById
+    (
+            @PathVariable Long proposalId
+    ) {
+        ProposalResponse response = proposalService.getById(proposalId);
+
+        return ResponseEntity.ok().body(response);
+
+    }
 
     /**
      * 사용자가 리더인 모든 방을 조회
@@ -65,7 +77,7 @@ public class ProposalController {
      */
 
     /**
-     * 신청서 수락
+     * 신청서 승인 or 거절
      * TODO : 방을 만들 수 있는 권한 체크 (현재는 ADMIN)
      */
     @PreAuthorize("hasRole('ADMIN')")
