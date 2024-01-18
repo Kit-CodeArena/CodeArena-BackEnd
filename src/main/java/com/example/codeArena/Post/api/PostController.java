@@ -2,6 +2,7 @@ package com.example.codeArena.Post.api;
 
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.domain.Post;
+import com.example.codeArena.Post.dto.PostResponseDto;
 import com.example.codeArena.Post.service.PostService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
@@ -50,17 +51,20 @@ public class PostController {
 
     // 게시글 전체 조회
     @GetMapping
-    public ResponseEntity<List<Post>> getAllPosts() {
-        return ResponseEntity.ok(postService.getAllPosts());
+    public ResponseEntity<List<PostResponseDto>> getAllPosts() {
+        List<Post> posts = postService.getAllPosts();
+        List<PostResponseDto> postDtos = postService.convertToDtoList(posts);
+        return ResponseEntity.ok(postDtos);
     }
 
     // 특정 게시글 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
-        return postService.getPostById(postId)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long postId) {
+        UserPrincipal currentUser = getCurrentUser();
+        PostResponseDto postDto = postService.getPostById(postId, currentUser.getId());
+        return ResponseEntity.ok(postDto);
     }
+
 
     // 게시글 수정
     @PutMapping(value = "/{postId}", consumes = {"multipart/form-data"})
@@ -104,12 +108,12 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByTag(tag));
     }
 
-    // 게시글에 좋아요 추가
+    // 게시글에 좋아요 추가/제거
     @PostMapping("/{postId}/like")
-    public ResponseEntity<Post> incrementLikes(@PathVariable Long postId) {
-        Post updatedPost = postService.incrementLikes(postId)
-                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
-        return ResponseEntity.ok(updatedPost);
+    public ResponseEntity<PostResponseDto> toggleLike(@PathVariable Long postId) {
+        UserPrincipal currentUser = getCurrentUser();
+        PostResponseDto updatedPostDto = postService.toggleLike(postId, currentUser.getId());
+        return ResponseEntity.ok(updatedPostDto);
     }
 
     // 게시글 조회수 증가
@@ -137,6 +141,7 @@ public class PostController {
         return ResponseEntity.ok(updatedPost);
     }
 
+    // 현재 로그인한 사용자 정보 가져오기
     private UserPrincipal getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {
