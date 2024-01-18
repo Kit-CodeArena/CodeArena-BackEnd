@@ -33,7 +33,7 @@ public class ChatController {
     @SendTo("/topic/public/{roomId}")
     public ChatResponse sendMessage(
             @DestinationVariable Long roomId,
-            @Header("simpSessionAttributes") Map<String, Object> simpSessionAttributes,
+            @Header("simpSessionAttributes") Map<Object, Object> simpSessionAttributes,
             @Payload ChatRequest chatRequest
     ) {
         return chatService.save(chatRequest, roomId, simpSessionAttributes);

@@ -6,10 +6,7 @@ import com.example.codeArena.chat.domain.Chat;
 import com.example.codeArena.chat.dto.request.ChatRequest;
 import com.example.codeArena.chat.dto.response.ChatResponse;
 import com.example.codeArena.chat.repository.ChatRepository;
-import com.example.codeArena.chatroom.domain.ChatRoom;
 import com.example.codeArena.exception.CustomException;
-import com.example.codeArena.exception.CustomException.ErrorCode;
-import com.example.codeArena.proposal.dto.response.ProposalResponse;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -28,11 +25,12 @@ public class ChatService {
     private final ChatRepository chatRepository;
 
     @Transactional
-    public ChatResponse save(ChatRequest chatRequest, Long roomId, Map<String, Object> header) {
-        String userNickname = getValueFromHeader(header, "userNickname");
+    public ChatResponse save(ChatRequest chatRequest, Long roomId, Map<Object, Object> header) {
+        String userNickname = (String) getValueFromHeader(header, "userNickname");
+        Long userId = (Long) getValueFromHeader(header, "userId");
         Chat chat = Chat.builder()
                 .roomId(roomId)
-                .userId(chatRequest.getUserId())
+                .userId(userId)
                 .userNickname(userNickname)
                 .messageType(chatRequest.getType())
                 .content(chatRequest.getContent())
@@ -41,8 +39,8 @@ public class ChatService {
         return toChatResponse(savedChat, userNickname);
     }
 
-    private String getValueFromHeader(Map<String, Object> header, String key) {
-        return (String)header.get(key);
+    private Object getValueFromHeader(Map<Object, Object> header, Object key) {
+        return header.get(key);
     }
 
     private ChatResponse toChatResponse(Chat chat, String nickname) {
