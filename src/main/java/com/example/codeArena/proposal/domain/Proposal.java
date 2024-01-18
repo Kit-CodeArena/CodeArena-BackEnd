@@ -15,10 +15,13 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.annotation.CreatedDate;
 
 @Getter
 @Entity
@@ -45,13 +48,18 @@ public class Proposal {
     @Enumerated(EnumType.STRING)
     private ProposalStatus status;
 
+    @CreatedDate
+    @Column(name = "created_at", updatable = false)
+    private LocalDateTime createdAt;
+
     @Builder
-    public Proposal(User user, Long leaderId, Long roomId, String content, ProposalStatus status) {
+    public Proposal(User user, Long leaderId, Long roomId, String content, ProposalStatus status, LocalDateTime createdAt) {
         this.user = user;
         this.leaderId = leaderId;
         this.chatRoomId = roomId;
         this.content = content;
         this.status = ProposalStatus.WAITING;
+        this.createdAt = LocalDateTime.now();
     }
 
     public boolean isApprove(ProposalStatus statusName) {

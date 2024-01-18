@@ -1,11 +1,14 @@
 package com.example.codeArena.proposal.service;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_USER_COUNT_OVER_CAPACITY;
+import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_INPUT_VALUE_DTO;
+import static com.example.codeArena.exception.CustomException.ErrorCode.PROPOSAL_ALREADY_EXIST;
 
 import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.chatroom.domain.ChatRoom;
 import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;
+import com.example.codeArena.chatroom.dto.response.ChatRoomDto;
 import com.example.codeArena.chatroom.repository.ChatRoomRepository;
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole;
@@ -16,11 +19,16 @@ import com.example.codeArena.proposal.domain.Proposal;
 import com.example.codeArena.proposal.domain.vo.ProposalStatus;
 import com.example.codeArena.proposal.dto.request.CreateProposalRequest;
 import com.example.codeArena.proposal.dto.request.UpdateProposalRequest;
+import com.example.codeArena.proposal.dto.response.ProposalPageResponse;
+import com.example.codeArena.proposal.dto.response.ProposalResponse;
 import com.example.codeArena.proposal.repository.ProposalRepository;
 import jakarta.transaction.Transactional;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -67,6 +75,36 @@ public class ProposalService {
         proposalRepository.save(proposal);
     }
 
+    public ProposalResponse getById(Long proposalId) {
+        Proposal proposal = proposalRepository.findById(proposalId)
+                .orElseThrow(() -> new CustomException(ErrorCode.PROPOSAL_NOT_FOUND));
+
+        ChatRoom room = chatRoomRepository.findById(proposal.getChatRoomId())
+                .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
+
+        return Optional.of(proposal)
+                .map(p -> new ProposalResponse(p, room))
+                .orElseThrow(()->new CustomException(INVALID_INPUT_VALUE_DTO));
+    }
+
+    public ProposalPageResponse getProposalsByMemberId(Long userId, Pageable pageable) {
+        List<ProposalResponse> responses = proposalRepository.findAllByUserIdOrderByCreatedAtDesc(userId, pageable)
+                .map(proposal -> {
+                    ChatRoom room = chatRoomRepository.findById(proposal.getChatRoomId())
+                            .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
+
+                    String roomName = room.getName();
+
+                    return Optional.of(proposal)
+                            .map(p -> new ProposalResponse(p, room))
+                            .orElseThrow(()->new CustomException(INVALID_INPUT_VALUE_DTO));
+                })
+                .toList();
+
+        return new ProposalPageResponse(responses);
+
+    }
+
     @Transactional
     public void updateProposalStatus(UpdateProposalRequest proposalRequest, Long userId, Long proposalId) {
         if (!userRepository.existsById(userId)) {
@@ -104,4 +142,7 @@ public class ProposalService {
 
         room.addRoomMember(createChatRoomUser);
     }
+
+
+
 }
