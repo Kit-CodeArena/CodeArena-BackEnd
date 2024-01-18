@@ -1,10 +1,10 @@
-package com.example.codeArena.User.controller;
+package com.example.codeArena.User.api;
 
 import com.example.codeArena.User.dto.LoginDto;
 import com.example.codeArena.User.dto.RegisterDto;
 import com.example.codeArena.User.dto.TokenDto;
 import com.example.codeArena.User.dto.UserDto;
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.service.UserService;
 import com.example.codeArena.User.util.JwtTokenProvider;
 import com.example.codeArena.security.UserPrincipal;

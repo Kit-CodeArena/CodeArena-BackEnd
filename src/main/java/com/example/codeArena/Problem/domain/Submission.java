@@ -1,4 +1,4 @@
-package com.example.codeArena.Problem.model;
+package com.example.codeArena.Problem.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

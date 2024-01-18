@@ -14,7 +14,6 @@ public class PostResponseDto {
     private Long id; // 게시글 ID
     private String title; // 제목
     private String content; // 내용
-    private String authorId; // 작성자 ID
     private String authorNickname;
     private Date createdAt; // 생성 날짜
     private Date updatedAt; // 수정 날짜

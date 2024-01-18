@@ -1,7 +1,7 @@
-package com.example.codeArena.Post.controller;
+package com.example.codeArena.Post.api;
 
 import com.example.codeArena.Post.dto.CommentCreateDto;
-import com.example.codeArena.Post.model.Comment;
+import com.example.codeArena.Post.domain.Comment;
 import com.example.codeArena.Post.service.CommentService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;

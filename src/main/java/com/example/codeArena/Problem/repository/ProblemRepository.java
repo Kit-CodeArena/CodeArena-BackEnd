@@ -1,10 +1,9 @@
 package com.example.codeArena.Problem.repository;
 
-import com.example.codeArena.Problem.model.Problem;
+import com.example.codeArena.Problem.domain.Problem;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ProblemRepository extends JpaRepository<Problem, Long> {

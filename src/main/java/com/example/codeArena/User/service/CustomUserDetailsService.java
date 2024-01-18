@@ -1,6 +1,6 @@
 package com.example.codeArena.User.service;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;

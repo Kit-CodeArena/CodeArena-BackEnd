@@ -1,18 +1,16 @@
 package com.example.codeArena.chat.handler;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.AUTH_HEADER_NOT_FOUND;
-import static com.example.codeArena.exception.CustomException.ErrorCode.INVALID_CONTEXT;
 import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT_FOUND;
 import static com.example.codeArena.exception.CustomException.ErrorCode.VALUE_NOT_FOUNE;
 import static com.example.codeArena.exception.CustomException.ErrorCode.WEB_SOCKET_SA_NULL;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.User.util.JwtTokenProvider;
 import com.example.codeArena.chatroomuser.repository.ChatRoomUserRepository;
 import com.example.codeArena.exception.CustomException;
-import com.example.codeArena.security.UserPrincipal;
-import io.jsonwebtoken.Claims;
+
 import java.util.Map;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
@@ -22,8 +20,6 @@ import org.springframework.messaging.MessageChannel;
 import org.springframework.messaging.simp.stomp.StompCommand;
 import org.springframework.messaging.simp.stomp.StompHeaderAccessor;
 import org.springframework.messaging.support.ChannelInterceptor;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 @Slf4j

@@ -16,7 +16,7 @@ public class ProblemDto {
     private String outputFormat;
     private String sampleInput;
     private String sampleOutput;
-    private Integer timeLimit;
+    private Double timeLimit;
     private Integer memoryLimit;
     private Integer totalSubmissions;
     private Integer correctSubmissions;

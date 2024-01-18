@@ -2,7 +2,7 @@ package com.example.codeArena.proposal.service;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.CHAT_ROOM_USER_COUNT_OVER_CAPACITY;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.chatroom.domain.ChatRoom;
 import com.example.codeArena.chatroom.domain.vo.ChatRoomStatus;

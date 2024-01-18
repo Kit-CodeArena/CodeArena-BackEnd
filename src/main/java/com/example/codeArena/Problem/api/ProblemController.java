@@ -1,4 +1,4 @@
-package com.example.codeArena.Problem.controller;
+package com.example.codeArena.Problem.api;
 
 import com.example.codeArena.Problem.dto.ProblemCreateDto;
 import com.example.codeArena.Problem.dto.ProblemDto;

@@ -1,4 +1,4 @@
-package com.example.codeArena.Problem.model;
+package com.example.codeArena.Problem.domain;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,7 +33,7 @@ public class Problem {
     private String sampleInput;  // 샘플 입력
     private String sampleOutput; // 샘플 출력
 
-    private Integer timeLimit; // 시간 제한
+    private Double timeLimit = 0.0; // 시간 제한
     private Integer memoryLimit; // 메모리 제한
 
     private Integer totalSubmissions = 0; // 총 제출 인원

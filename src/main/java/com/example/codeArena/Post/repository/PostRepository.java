@@ -1,6 +1,6 @@
 package com.example.codeArena.Post.repository;
 
-import com.example.codeArena.Post.model.Post;
+import com.example.codeArena.Post.domain.Post;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 

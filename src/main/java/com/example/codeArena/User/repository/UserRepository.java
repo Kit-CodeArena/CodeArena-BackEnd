@@ -1,6 +1,6 @@
 package com.example.codeArena.User.repository;
 
-import com.example.codeArena.User.model.User;
+import com.example.codeArena.User.domain.User;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.Optional;

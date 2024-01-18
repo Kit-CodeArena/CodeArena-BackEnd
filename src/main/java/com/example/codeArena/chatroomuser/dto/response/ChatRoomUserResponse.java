@@ -1,6 +1,5 @@
 package com.example.codeArena.chatroomuser.dto.response;
 
-import com.example.codeArena.User.model.User;
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole;
 import lombok.Builder;
