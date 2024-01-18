@@ -15,7 +15,7 @@ public class ProblemCreateDto {
     private String outputFormat;
     private String sampleInput;
     private String sampleOutput;
-    private Integer timeLimit;
+    private Double timeLimit;
     private Integer memoryLimit;
     private String category;
     private String[] tags;
