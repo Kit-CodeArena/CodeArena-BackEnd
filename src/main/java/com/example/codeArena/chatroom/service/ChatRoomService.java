@@ -41,10 +41,10 @@ public class ChatRoomService {
     public ChatRoomDto createRoom(ChatRoomCreateRequest dto, Long userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new CustomException(USER_NOT_FOUND));
 
-        ChatRoom chatRoom = ChatRoom.create(dto);
+        ChatRoom chatRoom = ChatRoom.create(dto, user);
 
         ChatRoomUser chatRoomUser = ChatRoomUser.builder()
-                .userId(user.getId())
+                .user(user)
                 .chatRoom(chatRoom)
                 .chatRoomUserRole(ChatRoomUserRole.LEADER)
                 .build();
@@ -73,7 +73,7 @@ public class ChatRoomService {
 
         List<ChatRoomUserResponse> users = chatRoom.getChatRoomUsers()
                 .stream()
-                .map(chatRoomUser -> ChatRoomUserResponse.of(user,chatRoomUser))
+                .map(chatRoomUser -> ChatRoomUserResponse.of(chatRoomUser))
                 .toList();
 
         return ChatRoomDetailDto.of(chatRoom, users);

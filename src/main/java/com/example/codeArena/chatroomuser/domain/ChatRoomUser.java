@@ -39,8 +39,9 @@ public class ChatRoomUser {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
-    private Long userId;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
 
     @ManyToOne
     @JoinColumn(name = "chat_room_id", nullable = false)
@@ -51,8 +52,8 @@ public class ChatRoomUser {
     private ChatRoomUserRole chatRoomUserRole;
 
     @Builder
-    public ChatRoomUser(Long userId, ChatRoom chatRoom, ChatRoomUserRole chatRoomUserRole) {
-        this.userId = userId;
+    public ChatRoomUser(User user, ChatRoom chatRoom, ChatRoomUserRole chatRoomUserRole) {
+        this.user = user;
         this.chatRoom = chatRoom;
         this.chatRoomUserRole = chatRoomUserRole;
         this.createdAt = LocalDateTime.now();

@@ -14,11 +14,11 @@ public class ChatRoomUserResponse {
     private String nickname;
     private ChatRoomUserRole chatRoomUserRole;
 
-    public static ChatRoomUserResponse of(User user, ChatRoomUser chatRoomUser) {
+    public static ChatRoomUserResponse of(ChatRoomUser chatRoomUser) {
         return ChatRoomUserResponse.builder()
                 .id(chatRoomUser.getId())
-                .userId(user.getId())
-                .nickname(user.getNickname())
+                .userId(chatRoomUser.getUser().getId())
+                .nickname(chatRoomUser.getUser().getNickname())
                 .chatRoomUserRole(chatRoomUser.getChatRoomUserRole())
                 .build();
     }

@@ -56,12 +56,20 @@ public class CustomException extends RuntimeException {
         CHAT_ROOM_NOT_FOUND("채팅방을 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         CHAT_ROOM_USER_NOT_FOUND("채팅방에서 해당 사용자를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
         AUTH_HEADER_NOT_FOUND("authHeaderValue가 존재하지 않습니다.", HttpStatus.NOT_FOUND),
+        PROPOSAL_NOT_FOUND("해당 신청서를 찾을 수 없습니다.", HttpStatus.NOT_FOUND),
 
         // 409 CONFLICT : Resource 의 현재 상태와 충돌. 보통 중복된 데이터 존재
         EMAIL_ALREADY_EXISTS("이미 사용 중인 이메일입니다.", HttpStatus.CONFLICT),
         NICKNAME_ALREADY_EXISTS("이미 사용 중인 닉네임입니다.", HttpStatus.CONFLICT),
         USER_ALREADY_EXISTS("사용자가 이미 존재합니다.", HttpStatus.CONFLICT),
         CHAT_ROOM_ALREADY_EXIST("이미 해당 사용자와 관련된 방이 존재합니다.", HttpStatus.CONFLICT),
+        PROPOSAL_ALREADY_EXIST("이미 신청서가 존재합니다.", HttpStatus.CONFLICT),
+        CHAT_ROOM_USER_COUNT_OVER_CAPACITY("해당 방이 가득찼습니다.", HttpStatus.CONFLICT),
+
+        // 채팅방 사용자 중복
+        DUPLICATE_BLOCKED_USER_FROM_CHAT_RROM("이미 해당 방에 사용자가 존재하며, 차단된 사용자입니다.",  HttpStatus.CONFLICT),
+        DUPLICATE_LEADER_USER_FROM_CHAT_RROM("이미 해당 방에 사용자가 존재하며, 방의 리더입니다.", HttpStatus.CONFLICT),
+        DUPLICATE_USER_FROM_CHAT_ROOM("이미 해당 방에 사용자가 존재하며, 방의 유저입니다.", HttpStatus.CONFLICT),
 
         // 500
         IMAGE_PROCESSING_FAILED("이미지 처리 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),;

@@ -3,6 +3,7 @@ package com.example.codeArena.chatroom.domain;
 import static com.example.codeArena.exception.CustomException.ErrorCode.IS_NOT_CLOSE;
 import static com.example.codeArena.exception.CustomException.ErrorCode.IS_NOT_OPENING;
 
+import com.example.codeArena.User.model.User;
 import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
 import com.example.codeArena.chatroom.domain.vo.Tag;
 import com.example.codeArena.chatroom.dto.request.ChatRoomCreateRequest;
@@ -16,19 +17,18 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 
 @Getter
-@Setter
 @NoArgsConstructor
 @Entity
 @Table(name = "chat_rooms")
@@ -54,17 +54,23 @@ public class ChatRoom {
     @Column(name = "created_at", updatable = false)
     private LocalDateTime createdAt;
 
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
     @OneToMany(mappedBy = "chatRoom", cascade = CascadeType.PERSIST)
     private Set<ChatRoomUser> chatRoomUsers = new HashSet<>();
 
 
-    public static ChatRoom create(ChatRoomCreateRequest dto) {
+
+    public static ChatRoom create(ChatRoomCreateRequest dto, User user) {
         ChatRoom room = new ChatRoom();
         room.name = dto.getName();
         room.maxUserNum = dto.getMaxUserNum();
         room.tag = dto.getTag();
         room.status = ChatRoomStatus.OPEN;
         room.createdAt = LocalDateTime.now();
+        room.user = user;
         return room;
     }
 
