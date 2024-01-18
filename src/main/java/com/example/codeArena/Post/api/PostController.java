@@ -59,11 +59,12 @@ public class PostController {
 
     // 특정 게시글 조회
     @GetMapping("/{postId}")
-    public ResponseEntity<Post> getPostById(@PathVariable Long postId) {
-        return postService.getPostById(postId)
-                .map(ResponseEntity::ok)
-                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
+    public ResponseEntity<PostResponseDto> getPostById(@PathVariable Long postId) {
+        UserPrincipal currentUser = getCurrentUser();
+        PostResponseDto postDto = postService.getPostById(postId, currentUser.getId());
+        return ResponseEntity.ok(postDto);
     }
+
 
     // 게시글 수정
     @PutMapping(value = "/{postId}", consumes = {"multipart/form-data"})
@@ -140,6 +141,7 @@ public class PostController {
         return ResponseEntity.ok(updatedPost);
     }
 
+    // 현재 로그인한 사용자 정보 가져오기
     private UserPrincipal getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal)) {

@@ -50,8 +50,16 @@ public class PostService {
     }
 
     // 게시글 조회
-    public Optional<Post> getPostById(Long postId) {
-        return postRepository.findById(postId);
+    public PostResponseDto getPostById(Long postId, Long currentUserId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
+
+        // 현재 사용자가 좋아요를 눌렀는지 확인
+        User currentUser = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.USER_NOT_FOUND));
+        boolean isLikedByCurrentUser = post.getLikedUsers().contains(currentUser);
+
+        return convertToDto(post, isLikedByCurrentUser);
     }
 
     // 게시글 전체 조회
