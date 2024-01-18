@@ -1,5 +1,8 @@
 package com.example.codeArena.Post.domain;
 
+import com.example.codeArena.User.domain.User;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +21,6 @@ public class Comment {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; // 댓글 ID
 
-    private Long postId; // 해당 댓글이 속한 게시글의 ID
-    private Long authorId; // 댓글 작성자 ID (User 모델의 ID와 연결)
     private String authorNickname; // 댓글 작성자 닉네임
     private String content; // 댓글 내용
 
@@ -33,6 +34,16 @@ public class Comment {
 
     private Long parentCommentId; // 원 댓글 ID
 
+
+    @JsonIgnore
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id", referencedColumnName = "id")
+    private Post post;
+
+    @JsonBackReference
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "author_id", referencedColumnName = "id")
+    private User author;
 
     // 대댓글 추가 메소드
     public void addReply(Long replyId) {

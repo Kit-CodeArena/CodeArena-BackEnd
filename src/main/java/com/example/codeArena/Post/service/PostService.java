@@ -1,10 +1,13 @@
 package com.example.codeArena.Post.service;
 
+import com.example.codeArena.Post.domain.Comment;
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.domain.Post;
+import com.example.codeArena.Post.repository.CommentRepository;
 import com.example.codeArena.Post.repository.PostRepository;
+import com.example.codeArena.User.domain.User;
+import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.exception.CustomException;
-import com.example.codeArena.exception.CustomException.ErrorCode;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -21,15 +24,21 @@ public class PostService {
 
     private final Logger logger = LoggerFactory.getLogger(PostService.class);
     private final PostRepository postRepository;
+    private final UserRepository userRepository;
 
+    private final CommentRepository commentRepository;
     @Autowired
-    public PostService(PostRepository postRepository) {
+    public PostService(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
+        this.userRepository = userRepository;
+        this.commentRepository = commentRepository;
     }
-
     // 게시글 생성
     public Post createPost(PostCreateDto createDto, MultipartFile image) throws IOException {
-        Post post = new Post(createDto.getTitle(), createDto.getContent(), createDto.getAuthorId(), createDto.getAuthorNickname(), createDto.getTags());
+        User author = userRepository.findById(createDto.getAuthorId())
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.USER_NOT_FOUND));
+
+        Post post = new Post(createDto.getTitle(), createDto.getContent(), author, createDto.getTags());
         if (image != null && !image.isEmpty()) {
             post.addImage(image.getBytes());
         }
@@ -49,7 +58,7 @@ public class PostService {
     // 게시글 수정
     public Optional<Post> updatePost(Long postId, Long currentUserId, PostCreateDto updateDto, MultipartFile image) throws IOException {
         return postRepository.findById(postId).map(post -> {
-            if (!post.getAuthorId().equals(currentUserId)) {
+            if (!post.getAuthor().getId().equals(currentUserId)) {
                 throw new CustomException(CustomException.ErrorCode.ACCESS_DENIED);
             }
             post.setTitle(updateDto.getTitle());
@@ -70,10 +79,10 @@ public class PostService {
     // 게시글 삭제
     public void deletePost(Long postId, Long currentUserId) {
         Post post = postRepository.findById(postId)
-                .orElseThrow(() -> new CustomException(ErrorCode.POST_NOT_FOUND));
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
 
-        if (!post.getAuthorId().equals(currentUserId)) {
-            throw new CustomException(ErrorCode.ACCESS_DENIED);
+        if (!post.getAuthor().getId().equals(currentUserId)) {
+            throw new CustomException(CustomException.ErrorCode.ACCESS_DENIED);
         }
 
         postRepository.deleteById(postId);
@@ -110,15 +119,6 @@ public class PostService {
         });
     }
 
-    // 댓글 ID 추가
-    public Optional<Post> addCommentToPost(Long postId, Long commentId) {
-        return postRepository.findById(postId).map(post -> {
-            post.addComment(commentId);
-            return postRepository.save(post);
-        });
-    }
-
-
     // 이미지 업로드
     public Optional<Post> uploadImageToPost(Long postId, MultipartFile image) throws IOException {
         return postRepository.findById(postId).map(post -> {
@@ -128,8 +128,18 @@ public class PostService {
                 }
             } catch (IOException e) {
                 logger.error("게시글 ID " + postId + "에 대한 이미지 업로드 중 오류 발생", e);
-                throw new CustomException(ErrorCode.IMAGE_PROCESSING_FAILED);
+                throw new CustomException(CustomException.ErrorCode.IMAGE_PROCESSING_FAILED);
             }
+            return postRepository.save(post);
+        });
+    }
+
+    public Optional<Post> addCommentToPost(Long postId, Long commentId) {
+        return postRepository.findById(postId).map(post -> {
+            Comment comment = commentRepository.findById(commentId)
+                    .orElseThrow(() -> new CustomException(CustomException.ErrorCode.COMMENT_NOT_FOUND));
+
+            post.addComment(comment);
             return postRepository.save(post);
         });
     }
