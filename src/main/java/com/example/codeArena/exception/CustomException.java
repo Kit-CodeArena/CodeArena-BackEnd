@@ -70,6 +70,7 @@ public class CustomException extends RuntimeException {
         DUPLICATE_BLOCKED_USER_FROM_CHAT_RROM("이미 해당 방에 사용자가 존재하며, 차단된 사용자입니다.",  HttpStatus.CONFLICT),
         DUPLICATE_LEADER_USER_FROM_CHAT_RROM("이미 해당 방에 사용자가 존재하며, 방의 리더입니다.", HttpStatus.CONFLICT),
         DUPLICATE_USER_FROM_CHAT_ROOM("이미 해당 방에 사용자가 존재하며, 방의 유저입니다.", HttpStatus.CONFLICT),
+        BLOCK_USER_FROM_CHAT_ROOM("이미 해당 방에서 강제 퇴장된 사용자 입니다.", HttpStatus.CONFLICT),
 
         // 500
         IMAGE_PROCESSING_FAILED("이미지 처리 중 오류가 발생했습니다.", HttpStatus.INTERNAL_SERVER_ERROR),;

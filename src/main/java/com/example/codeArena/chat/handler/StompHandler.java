@@ -1,6 +1,7 @@
 package com.example.codeArena.chat.handler;
 
 import static com.example.codeArena.exception.CustomException.ErrorCode.AUTH_HEADER_NOT_FOUND;
+import static com.example.codeArena.exception.CustomException.ErrorCode.BLOCK_USER_FROM_CHAT_ROOM;
 import static com.example.codeArena.exception.CustomException.ErrorCode.USER_NOT_FOUND;
 import static com.example.codeArena.exception.CustomException.ErrorCode.VALUE_NOT_FOUNE;
 import static com.example.codeArena.exception.CustomException.ErrorCode.WEB_SOCKET_SA_NULL;
@@ -8,6 +9,8 @@ import static com.example.codeArena.exception.CustomException.ErrorCode.WEB_SOCK
 import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.User.util.JwtTokenProvider;
+import com.example.codeArena.chatroomuser.domain.ChatRoomUser;
+import com.example.codeArena.chatroomuser.domain.vo.ChatRoomUserRole;
 import com.example.codeArena.chatroomuser.repository.ChatRoomUserRepository;
 import com.example.codeArena.exception.CustomException;
 
@@ -130,8 +133,12 @@ public class StompHandler implements ChannelInterceptor {
     }
 
     private void validateUserInChatRoom(Long userId, Long roomId) {
-        chatRoomUserRepository.findChatRoomUsersByUserIdAndChatRoomId(userId, roomId)
+        ChatRoomUser chatRoomUser = chatRoomUserRepository.findChatRoomUsersByUserIdAndChatRoomId(userId, roomId)
                 .orElseThrow(() -> new CustomException(USER_NOT_FOUND));
+
+        if(chatRoomUser.getChatRoomUserRole().equals(ChatRoomUserRole.BLOCKED)){
+            throw new CustomException(BLOCK_USER_FROM_CHAT_ROOM);
+        }
     }
 
 }
