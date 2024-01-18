@@ -13,6 +13,8 @@ import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -50,8 +52,10 @@ public class ChatRoomController {
 
     // 모든 채팅방 목록
     @GetMapping(value = "/rooms")
-    public List<ChatRoomDto> findAllRoom() {
-        return chatRoomService.findAllRooms();
+    public List<ChatRoomDto> findAllRoom(
+            @PageableDefault Pageable pageable
+    ) {
+        return chatRoomService.findAllRooms(pageable);
     }
 
     /**
