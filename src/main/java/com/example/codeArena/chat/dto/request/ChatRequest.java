@@ -1,5 +1,6 @@
 package com.example.codeArena.chat.dto.request;
 
+import com.example.codeArena.chat.domain.Chat;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
