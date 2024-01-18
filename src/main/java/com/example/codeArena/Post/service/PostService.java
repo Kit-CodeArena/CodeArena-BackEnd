@@ -1,6 +1,7 @@
 package com.example.codeArena.Post.service;
 
 import com.example.codeArena.Post.domain.Comment;
+import com.example.codeArena.Post.dto.CommentResponseDto;
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.domain.Post;
 import com.example.codeArena.Post.dto.PostResponseDto;
@@ -187,6 +188,13 @@ public class PostService {
         dto.setViews(post.getViews());
         dto.setLikes(post.getLikedUsers().size()); // 좋아요 수 설정
         dto.setIsLikedByCurrentUser(isLikedByCurrentUser); // 현재 사용자의 좋아요 상태 설정
+        // 댓글 목록 변환
+        List<CommentResponseDto> commentDtos = post.getComments().stream()
+                .map(comment -> new CommentResponseDto(comment.getId(), comment.getAuthorNickname(), comment.getContent(),comment.getCreatedAt()))
+                .collect(Collectors.toList());
+
+        dto.setComments(commentDtos); // 댓글 목록 설정
+        dto.setCommentCount(commentDtos.size()); // 댓글 수 설정
         return dto;
     }
 

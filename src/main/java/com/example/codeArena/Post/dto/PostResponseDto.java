@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 @Data
@@ -21,6 +22,7 @@ public class PostResponseDto {
     private Set<String> tags; // 태그 세트
     private int views; // 조회 수
     private int commentCount; // 댓글 수
+    private List<CommentResponseDto> comments; // 댓글 목록
     private boolean isLikedByCurrentUser;
     private int likes; // 좋아요 수
 
