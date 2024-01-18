@@ -3,11 +3,13 @@ package com.example.codeArena.Post.service;
 import com.example.codeArena.Post.domain.Comment;
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.domain.Post;
+import com.example.codeArena.Post.dto.PostResponseDto;
 import com.example.codeArena.Post.repository.CommentRepository;
 import com.example.codeArena.Post.repository.PostRepository;
 import com.example.codeArena.User.domain.User;
 import com.example.codeArena.User.repository.UserRepository;
 import com.example.codeArena.exception.CustomException;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
@@ -25,14 +27,15 @@ public class PostService {
     private final Logger logger = LoggerFactory.getLogger(PostService.class);
     private final PostRepository postRepository;
     private final UserRepository userRepository;
-
     private final CommentRepository commentRepository;
+
     @Autowired
     public PostService(PostRepository postRepository, UserRepository userRepository, CommentRepository commentRepository) {
         this.postRepository = postRepository;
         this.userRepository = userRepository;
         this.commentRepository = commentRepository;
     }
+
     // 게시글 생성
     public Post createPost(PostCreateDto createDto, MultipartFile image) throws IOException {
         User author = userRepository.findById(createDto.getAuthorId())
@@ -103,20 +106,30 @@ public class PostService {
         return postRepository.findByTagsContaining(tag);
     }
 
-    // 게시글에 좋아요 추가
-    public Optional<Post> incrementLikes(Long postId) {
-        return postRepository.findById(postId).map(post -> {
-            post.incrementLikes();
-            return postRepository.save(post);
-        });
-    }
+    // 게시글에 좋아요 추가/제거
+    @Transactional
+    public PostResponseDto toggleLike(Long postId, Long userId) {
+        Post post = postRepository.findById(postId)
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
 
-    // 게시글에 좋아요 감소
-    public Optional<Post> decrementLikes(Long postId) {
-        return postRepository.findById(postId).map(post -> {
-            post.decrementLikes();
-            return postRepository.save(post);
-        });
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.USER_NOT_FOUND));
+
+        boolean liked = post.getLikedUsers().contains(user);
+        if (liked) {
+            post.removeLike(user);
+        } else {
+            post.addLike(user);
+        }
+
+        // 좋아요 관련 변경 사항을 데이터베이스에 반영하기 위해 저장
+        Post updatedPost = postRepository.save(post);
+
+        // 좋아요 상태를 반환하는 부분을 수정
+        boolean isLikedByCurrentUser = updatedPost.getLikedUsers().contains(user);
+
+        // 변화된 게시글 정보를 DTO로 변환하여 반환
+        return convertToDto(updatedPost, isLikedByCurrentUser);
     }
 
     // 게시글 조회수 증가
@@ -150,5 +163,21 @@ public class PostService {
             post.addComment(comment);
             return postRepository.save(post);
         });
+    }
+
+    // Post를 PostResponseDto로 변환
+    public PostResponseDto convertToDto(Post post, boolean isLikedByCurrentUser) {
+        PostResponseDto dto = new PostResponseDto();
+        dto.setId(post.getId());
+        dto.setTitle(post.getTitle());
+        dto.setContent(post.getContent());
+        dto.setAuthorNickname(post.getAuthor().getNickname());
+        dto.setCreatedAt(post.getCreatedAt());
+        dto.setUpdatedAt(post.getUpdatedAt());
+        dto.setTags(post.getTags());
+        dto.setViews(post.getViews());
+        dto.setLikes(post.getLikedUsers().size()); // 좋아요 수 설정
+        dto.setIsLikedByCurrentUser(isLikedByCurrentUser); // 현재 사용자의 좋아요 상태 설정
+        return dto;
     }
 }

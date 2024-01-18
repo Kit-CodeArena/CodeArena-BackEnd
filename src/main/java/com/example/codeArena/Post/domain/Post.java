@@ -2,6 +2,7 @@ package com.example.codeArena.Post.domain;
 
 import com.example.codeArena.User.domain.User;
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,22 +18,21 @@ import java.util.*;
 public class Post {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id; // 게시글 ID
+    private Long id;
 
-    private String title; // 제목
-    private String content; // 내용
-
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date createdAt; // 생성 날짜
+    private String title;
+    private String content;
 
     @Temporal(TemporalType.TIMESTAMP)
-    private Date updatedAt; // 수정 날짜
+    private Date createdAt;
+
+    @Temporal(TemporalType.TIMESTAMP)
+    private Date updatedAt;
 
     @ElementCollection
-    private Set<String> tags = new HashSet<>(); // 태그 세트
+    private Set<String> tags = new HashSet<>();
 
-    private int likes; // 좋아요 수
-    private int views; // 조회 수
+    private int views;
 
     @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
@@ -44,42 +44,52 @@ public class Post {
 
     @Lob
     @Column(name = "image", columnDefinition="LONGBLOB")
-    private byte[] image; // 이미지 데이터
+    private byte[] image;
+
+    @ManyToMany
+    @JoinTable(
+            name = "post_liked_users",
+            joinColumns = @JoinColumn(name = "post_id"),
+            inverseJoinColumns = @JoinColumn(name = "user_id")
+    )
+    @JsonIgnore
+    private Set<User> likedUsers = new HashSet<>();
 
     public Post(String title, String content, User author, Set<String> tags) {
         this.title = title;
         this.content = content;
-        this.author = author; // User 객체를 직접 참조
+        this.author = author;
         this.tags = tags;
         this.createdAt = new Date();
         this.updatedAt = this.createdAt;
-        this.likes = 0;
         this.views = 0;
-        this.comments = new ArrayList<>();
     }
 
-    // 이미지 추가 메소드
     public void addImage(byte[] image) {
         this.image = image;
-    }
-
-    // 좋아요와 조회 수 증가 메소드
-    public void incrementLikes() {
-        this.likes++;
-    }
-
-    // 좋아요 감소 메소드
-    public void decrementLikes() {
-        this.likes--;
     }
 
     public void incrementViews() {
         this.views++;
     }
 
-    // 댓글 추가 메소드
     public void addComment(Comment comment) {
         this.comments.add(comment);
-        comment.setPost(this); // 댓글에 게시글 설정
+        comment.setPost(this);
+    }
+
+    // 좋아요 수 반환
+    public int getLikes() {
+        return likedUsers.size();
+    }
+
+    // 좋아요 추가
+    public void addLike(User user) {
+        this.likedUsers.add(user);
+    }
+
+    // 좋아요 제거
+    public void removeLike(User user) {
+        this.likedUsers.remove(user);
     }
 }

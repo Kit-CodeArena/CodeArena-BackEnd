@@ -2,6 +2,7 @@ package com.example.codeArena.Post.api;
 
 import com.example.codeArena.Post.dto.PostCreateDto;
 import com.example.codeArena.Post.domain.Post;
+import com.example.codeArena.Post.dto.PostResponseDto;
 import com.example.codeArena.Post.service.PostService;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
@@ -104,20 +105,12 @@ public class PostController {
         return ResponseEntity.ok(postService.getPostsByTag(tag));
     }
 
-    // 게시글에 좋아요 추가
+    // 게시글에 좋아요 추가/제거
     @PostMapping("/{postId}/like")
-    public ResponseEntity<Post> incrementLikes(@PathVariable Long postId) {
-        Post updatedPost = postService.incrementLikes(postId)
-                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
-        return ResponseEntity.ok(updatedPost);
-    }
-
-    // 게시글에 좋아요 감소
-    @PostMapping("/{postId}/delike")
-    public ResponseEntity<Post> decrementLikes(@PathVariable Long postId) {
-        Post updatedPost = postService.decrementLikes(postId)
-                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
-        return ResponseEntity.ok(updatedPost);
+    public ResponseEntity<PostResponseDto> toggleLike(@PathVariable Long postId) {
+        UserPrincipal currentUser = getCurrentUser();
+        PostResponseDto updatedPostDto = postService.toggleLike(postId, currentUser.getId());
+        return ResponseEntity.ok(updatedPostDto);
     }
 
     // 게시글 조회수 증가
