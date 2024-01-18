@@ -42,7 +42,7 @@ public class ChatController {
     /**
      * 채팅 목록
      */
-    @GetMapping("/api/test/room/{roomId}/chats")
+    @GetMapping("/api/room/{roomId}/chats")
     public ResponseEntity<List<ChatResponse>> getChattingList(
             @PathVariable(name = "roomId") Long roomId,
             @PageableDefault(sort = "createdAt") Pageable pageable) {

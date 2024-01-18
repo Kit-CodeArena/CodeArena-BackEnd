@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequiredArgsConstructor
 @RestController
-@RequestMapping("/api/test")
+@RequestMapping("/api")
 public class ChatRoomController {
     private final ChatRoomService chatRoomService;
 
