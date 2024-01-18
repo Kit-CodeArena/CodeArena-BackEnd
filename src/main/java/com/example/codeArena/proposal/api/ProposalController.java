@@ -11,9 +11,7 @@ import com.example.codeArena.proposal.dto.response.ProposalResponse;
 import com.example.codeArena.proposal.service.ProposalService;
 import com.example.codeArena.security.UserPrincipal;
 import jakarta.validation.Valid;
-import java.net.URI;
 import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.ResponseEntity;
@@ -37,10 +35,6 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class ProposalController {
 
     private final ProposalService proposalService;
-
-    /**
-     * TODO API LIST
-     */
 
     /**
      * 신청서 작성
@@ -76,7 +70,19 @@ public class ProposalController {
     /**
      * 사용자가 리더인 모든 방을 조회 = 내가 받은 신청서
      */
+    @GetMapping(value = "/proposals/leader")
+    public ResponseEntity<ProposalPageResponse> getProposalsByLeaderId
+    (
+            @PageableDefault Pageable pageable
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
+            throw new CustomException(INVALID_CONTEXT);
+        }
+        ProposalPageResponse responses = proposalService.getProposalsByLeaderId(user.getId(), pageable);
 
+        return ResponseEntity.ok().body(responses);
+    }
 
     /**
      * 사용자가 리더가 아닌(참여자 인) 모든 방을 조회
