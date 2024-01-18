@@ -1,8 +1,11 @@
 package com.example.codeArena.Problem.dto;
 
+import com.example.codeArena.Problem.domain.TestCase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.List;
 
 @Data
 @NoArgsConstructor
@@ -19,4 +22,5 @@ public class ProblemUpdateDto {
     private Integer memoryLimit;
     private String category;
     private String[] tags;
+    private List<TestCase> testCases;
 }

@@ -1,5 +1,6 @@
 package com.example.codeArena.Problem.service;
 
+import com.example.codeArena.Problem.domain.TestCase;
 import com.example.codeArena.Problem.dto.ProblemCreateDto;
 import com.example.codeArena.Problem.dto.ProblemDto;
 import com.example.codeArena.Problem.dto.ProblemUpdateDto;
@@ -26,6 +27,11 @@ public class ProblemService {
     public ProblemDto createProblem(ProblemCreateDto createDto) {
         Problem problem = new Problem();
         updateProblemFields(problem, createDto);
+        // 테스트 케이스 추가
+        for (TestCase testCase : createDto.getTestCases()) {
+            testCase.setProblem(problem);
+        }
+        problem.setTestCases(createDto.getTestCases());
         return convertToDto(problemRepository.save(problem));
     }
 
