@@ -112,6 +112,14 @@ public class PostController {
         return ResponseEntity.ok(updatedPost);
     }
 
+    // 게시글에 좋아요 감소
+    @DeleteMapping("/{postId}/like")
+    public ResponseEntity<Post> decrementLikes(@PathVariable Long postId) {
+        Post updatedPost = postService.decrementLikes(postId)
+                .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
+        return ResponseEntity.ok(updatedPost);
+    }
+
     // 게시글 조회수 증가
     @PostMapping("/{postId}/view")
     public ResponseEntity<Post> incrementViews(@PathVariable Long postId) {

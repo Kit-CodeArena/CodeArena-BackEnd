@@ -68,6 +68,11 @@ public class Post {
         this.likes++;
     }
 
+    // 좋아요 감소 메소드
+    public void decrementLikes() {
+        this.likes--;
+    }
+
     public void incrementViews() {
         this.views++;
     }

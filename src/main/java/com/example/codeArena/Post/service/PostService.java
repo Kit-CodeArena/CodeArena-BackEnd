@@ -111,6 +111,14 @@ public class PostService {
         });
     }
 
+    // 게시글에 좋아요 감소
+    public Optional<Post> decrementLikes(Long postId) {
+        return postRepository.findById(postId).map(post -> {
+            post.decrementLikes();
+            return postRepository.save(post);
+        });
+    }
+
     // 게시글 조회수 증가
     public Optional<Post> incrementViews(Long postId) {
         return postRepository.findById(postId).map(post -> {
