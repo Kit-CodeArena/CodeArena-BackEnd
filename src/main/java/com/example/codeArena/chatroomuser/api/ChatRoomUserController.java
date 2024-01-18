@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -44,5 +45,16 @@ public class ChatRoomUserController {
      * 방 나가기 기능.
      * 방을 나가면 해당 채팅방 인원에서 삭제
      */
+    @DeleteMapping(value = "/{roomId}/user")
+    public ResponseEntity<Void> delete(
+            @PathVariable Long roomId
+    ) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof UserPrincipal user)) {
+            throw new CustomException(INVALID_CONTEXT);
+        }
+        chatRoomUserService.delete(user.getId(), roomId);
 
+        return ResponseEntity.ok().build();
+    }
 }
