@@ -113,7 +113,7 @@ public class PostController {
     }
 
     // 게시글에 좋아요 감소
-    @DeleteMapping("/{postId}/like")
+    @PostMapping("/{postId}/delike")
     public ResponseEntity<Post> decrementLikes(@PathVariable Long postId) {
         Post updatedPost = postService.decrementLikes(postId)
                 .orElseThrow(() -> new CustomException(CustomException.ErrorCode.POST_NOT_FOUND));
