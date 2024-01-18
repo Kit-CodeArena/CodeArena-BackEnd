@@ -2,8 +2,11 @@ package com.example.codeArena.proposal.dto.request;
 
 import com.example.codeArena.User.domain.User;
 import com.example.codeArena.proposal.domain.Proposal;
+import com.example.codeArena.proposal.domain.vo.ProposalStatus;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.Getter;
 
 @Getter
@@ -19,6 +22,8 @@ public class CreateProposalRequest {
                 .leaderId(dto.getLeaderId())
                 .roomId(roomId)
                 .content(dto.getContent())
+                .status(ProposalStatus.WAITING)
+                .createdAt(LocalDateTime.now())
                 .build();
     }
 }
