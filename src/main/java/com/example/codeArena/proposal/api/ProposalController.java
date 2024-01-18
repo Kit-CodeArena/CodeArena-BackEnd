@@ -76,6 +76,11 @@ public class ProposalController {
     /**
      * 사용자가 리더인 모든 방을 조회 = 내가 받은 신청서
      */
+
+
+    /**
+     * 사용자가 리더가 아닌(참여자 인) 모든 방을 조회
+     */
     @GetMapping(value = "/proposals/user")
     public ResponseEntity<ProposalPageResponse> getProposalsByMemberId
     (
@@ -90,9 +95,6 @@ public class ProposalController {
         return ResponseEntity.ok().body(responses);
     }
 
-    /**
-     * 사용자가 리더가 아닌(참여자 인) 모든 방을 조회
-     */
 
     /**
      * 신청서 승인 or 거절
@@ -111,9 +113,4 @@ public class ProposalController {
         }
         proposalService.updateProposalStatus(proposalRequest, user.getId(), proposalId);
     }
-
-
-    /**
-     * 신청서 거절
-     */
 }
