@@ -20,8 +20,11 @@ import java.util.stream.Collectors;
 @Service
 public class ProblemService {
 
-    @Autowired
-    private ProblemRepository problemRepository;
+    private final ProblemRepository problemRepository;
+
+    public ProblemService(ProblemRepository problemRepository) {
+        this.problemRepository = problemRepository;
+    }
 
     // 문제 생성
     public ProblemDto createProblem(ProblemCreateDto createDto) {
