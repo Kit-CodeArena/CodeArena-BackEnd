@@ -2,7 +2,6 @@ package com.example.codeArena.Problem.api;
 
 import com.example.codeArena.Problem.dto.SubmissionDto;
 import com.example.codeArena.Problem.service.SubmissionService;
-import com.example.codeArena.User.domain.User;
 import com.example.codeArena.exception.CustomException;
 import com.example.codeArena.security.UserPrincipal;
 import org.slf4j.Logger;
@@ -11,7 +10,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController

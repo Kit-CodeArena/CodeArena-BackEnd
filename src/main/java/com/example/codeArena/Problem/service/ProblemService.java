@@ -1,14 +1,12 @@
 package com.example.codeArena.Problem.service;
 
+import com.example.codeArena.Problem.domain.Problem;
 import com.example.codeArena.Problem.domain.TestCase;
 import com.example.codeArena.Problem.dto.ProblemCreateDto;
 import com.example.codeArena.Problem.dto.ProblemDto;
 import com.example.codeArena.Problem.dto.ProblemUpdateDto;
-import com.example.codeArena.Problem.domain.Problem;
 import com.example.codeArena.Problem.repository.ProblemRepository;
 import com.example.codeArena.exception.CustomException;
-import static com.example.codeArena.exception.CustomException.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -16,6 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
+
+import static com.example.codeArena.exception.CustomException.ErrorCode;
 
 @Service
 public class ProblemService {

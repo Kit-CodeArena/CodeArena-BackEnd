@@ -11,6 +11,7 @@ import com.example.codeArena.Problem.repository.SubmissionRepository;
 import org.springframework.stereotype.Service;
 
 import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.logging.Logger;
@@ -157,24 +158,39 @@ public class SubmissionService {
     private ExecutionResult runCodeInDocker(Submission submission, String inputFilePath, String command, Problem problem) {
         ExecutionResult executionResult = new ExecutionResult();
         try {
-            // Docker 커맨드 수정
-            String modifiedCommand = "docker run --rm -i -v \"" + System.getProperty("user.dir") + "\\temp:/home/coder\" " + "codearena-runner python3 /home/coder/script.py";
+            // 메모리 제한 설정
+            String memoryLimit = problem.getMemoryLimit() + "m";
 
-            // Docker 커맨드 준비
+            // Docker 커맨드 수정
+            String modifiedCommand;
+            String args = new String(Files.readAllBytes(Paths.get(inputFilePath)));
+            switch (submission.getLanguage()) {
+                case "java":
+                    modifiedCommand = String.format(
+                            "docker run --rm -i --memory %s -v \"%s:/home/coder\" codearena-runner /bin/bash -c \"javac /home/coder/Main.java && java -cp /home/coder Main %s\"",
+                            memoryLimit, Paths.get(System.getProperty("user.dir"), "temp"), args);
+                    break;
+                case "python":
+                    modifiedCommand = String.format("docker run --rm -i --memory %s -v \"%s:/home/coder\" codearena-runner python3 /home/coder/script.py < /home/coder/input.txt", memoryLimit, Paths.get(System.getProperty("user.dir"), "temp"));
+                    break;
+                case "cpp":
+                    modifiedCommand = String.format(
+                            "docker run --rm -i --memory %s -v \"%s:/home/coder\" codearena-runner /bin/bash -c \"g++ /home/coder/program.cpp -o /home/coder/program && /home/coder/program `cat /home/coder/input.txt`\"",
+                            memoryLimit, Paths.get(System.getProperty("user.dir"), "temp"));
+                    break;
+                default:
+                    throw new RuntimeException("Unsupported language: " + submission.getLanguage());
+            }
+
             ProcessBuilder builder = new ProcessBuilder(modifiedCommand.split(" "));
             builder.redirectErrorStream(true);
 
-            // 표준 입력 스트림 준비
             File inputFile = new File(inputFilePath);
             builder.redirectInput(ProcessBuilder.Redirect.from(inputFile));
 
-            // 시간 측정 시작
             long startTime = System.currentTimeMillis();
-
-            // 프로세스 시작
             Process process = builder.start();
 
-            // Output 및 Error 읽기
             StringBuilder output = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
@@ -183,28 +199,34 @@ public class SubmissionService {
                 }
             }
 
-            // 시간 측정 종료 및 실행 시간 계산
             long endTime = System.currentTimeMillis();
             long executionTimeMillis = endTime - startTime;
             double executionTimeSeconds = executionTimeMillis / 1000.0;
 
-            // 결과 설정
             executionResult.setOutput(output.toString());
             executionResult.setExecutionTime(executionTimeMillis);
 
-            // 시간 제한 초과 확인
             if (executionTimeMillis > problem.getTimeLimit() * 1000) {
                 executionResult.setTimeLimitExceeded(true);
             }
-            LOGGER.info("Total execution time (in seconds): " + executionTimeSeconds + "초");
-            LOGGER.info("Docker Output:" + output);
-            process.waitFor();
+
+            int exitValue = process.waitFor();
+            if (exitValue != 0) {
+                // 비정상 종료 시 메모리 초과 간주
+                executionResult.setMemoryLimitExceeded(true);
+            }
+
+            LOGGER.info("Total execution time (in seconds): " + executionTimeSeconds + " seconds");
+            LOGGER.info("Docker Output:\n" + output);
+            LOGGER.info("Memory limit for the process: " + memoryLimit);
         } catch (Exception e) {
             LOGGER.severe("Error running Docker command: " + e.getMessage());
             executionResult.setOutput("Error executing code: " + e.getMessage());
         }
         return executionResult;
     }
+
+
 
     private SubmissionDto convertToDto(Submission submission, Long userId) {
         return new SubmissionDto(
