@@ -2,10 +2,16 @@ package com.example.codeArena.Problem.api;
 
 import com.example.codeArena.Problem.dto.SubmissionDto;
 import com.example.codeArena.Problem.service.SubmissionService;
+import com.example.codeArena.User.domain.User;
+import com.example.codeArena.exception.CustomException;
+import com.example.codeArena.security.UserPrincipal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -25,7 +31,10 @@ public class SubmissionController {
     @PostMapping
     public ResponseEntity<SubmissionDto> createSubmission(@RequestBody SubmissionDto submissionDto) {
         try {
-            SubmissionDto createdSubmission = submissionService.createSubmission(submissionDto);
+            UserPrincipal userPrincipal = getCurrentUserId();
+            Long currentUserId = userPrincipal.getId();
+
+            SubmissionDto createdSubmission = submissionService.createSubmission(submissionDto, currentUserId);
             return ResponseEntity.ok(createdSubmission);
         } catch (Exception e) {
             logger.error("제출 처리 중 예외 발생", e);
@@ -54,4 +63,13 @@ public class SubmissionController {
             return ResponseEntity.badRequest().build();
         }
     }
+
+    private UserPrincipal getCurrentUserId() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null || !(authentication.getPrincipal() instanceof com.example.codeArena.security.UserPrincipal)) {
+            throw new CustomException(CustomException.ErrorCode.INVALID_CONTEXT);
+        }
+        return (UserPrincipal) authentication.getPrincipal();
+    }
+
 }

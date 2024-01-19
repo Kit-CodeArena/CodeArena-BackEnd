@@ -33,21 +33,25 @@ public class SubmissionService {
         User user = userRepository.findById(userId)
                 .orElseThrow(() -> new RuntimeException("사용자를 찾을 수 없습니다."));
         List<Submission> submissions = submissionRepository.findByUser(user);
-        return submissions.stream().map(this::convertToDto).collect(Collectors.toList());
+        return submissions.stream()
+                .map(submission -> convertToDto(submission, userId)) // Use lambda expression
+                .collect(Collectors.toList());
     }
 
     public List<SubmissionDto> getSubmissionsByProblem(Long problemId) {
         Problem problem = problemRepository.findById(problemId)
                 .orElseThrow(() -> new RuntimeException("문제를 찾을 수 없습니다."));
         List<Submission> submissions = submissionRepository.findByProblem(problem);
-        return submissions.stream().map(this::convertToDto).collect(Collectors.toList());
+        return submissions.stream()
+                .map(submission -> convertToDto(submission, submission.getUser().getId())) // Use lambda expression
+                .collect(Collectors.toList());
     }
 
-    public SubmissionDto createSubmission(SubmissionDto submissionDto) throws Exception {
-        User user = userRepository.findById(submissionDto.getUserId())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+    public SubmissionDto createSubmission(SubmissionDto submissionDto, Long currentUserId) throws Exception {
+        User user = userRepository.findById(currentUserId)
+                .orElseThrow(() -> new RuntimeException("인증된 사용자를 찾을 수 없습니다."));
         Problem problem = problemRepository.findById(submissionDto.getProblemId())
-                .orElseThrow(() -> new RuntimeException("Problem not found"));
+                .orElseThrow(() -> new RuntimeException("문제를 찾을 수 없습니다."));
 
         Submission submission = new Submission();
         submission.setUser(user);
@@ -59,8 +63,8 @@ public class SubmissionService {
         submission.setExecutionTime(0L);
 
         List<TestCase> testCases = problem.getTestCases();
-
         boolean allTestsPassed = true;
+
         for (TestCase testCase : testCases) {
             String testCaseInput = testCase.getInput();
             String testCaseOutput = testCase.getOutput();
@@ -70,9 +74,16 @@ public class SubmissionService {
             String command = buildDockerCommandWithFileInput(submission.getLanguage(), inputFilePath, codeFilePath);
 
             LOGGER.info("Executing Docker command: " + command);
-            String executionResult = runCodeInDocker(submission, inputFilePath, command);
+            ExecutionResult executionResult = runCodeInDocker(submission, inputFilePath, command, problem);
 
-            if (!executionResult.trim().equals(testCaseOutput.trim())) {
+            // Check for time and memory limits
+            if (executionResult.isTimeLimitExceeded() || executionResult.isMemoryLimitExceeded()) {
+                allTestsPassed = false;
+                submission.setResult(executionResult.isTimeLimitExceeded() ? "Time Limit Exceeded" : "Memory Limit Exceeded");
+                break;
+            }
+
+            if (!executionResult.getOutput().trim().equals(testCaseOutput.trim())) {
                 allTestsPassed = false;
                 break;
             }
@@ -85,7 +96,7 @@ public class SubmissionService {
         }
 
         Submission savedSubmission = submissionRepository.save(submission);
-        return convertToDto(savedSubmission);
+        return convertToDto(savedSubmission, currentUserId);
     }
 
     private String createFileWithContent(String fileName, String content) {
@@ -143,7 +154,8 @@ public class SubmissionService {
         };
     }
 
-    private String runCodeInDocker(Submission submission, String inputFilePath, String command) {
+    private ExecutionResult runCodeInDocker(Submission submission, String inputFilePath, String command, Problem problem) {
+        ExecutionResult executionResult = new ExecutionResult();
         try {
             // Docker 커맨드 수정
             String modifiedCommand = "docker run --rm -i -v \"" + System.getProperty("user.dir") + "\\temp:/home/coder\" " + "codearena-runner python3 /home/coder/script.py";
@@ -156,10 +168,13 @@ public class SubmissionService {
             File inputFile = new File(inputFilePath);
             builder.redirectInput(ProcessBuilder.Redirect.from(inputFile));
 
+            // 시간 측정 시작
+            long startTime = System.currentTimeMillis();
+
             // 프로세스 시작
             Process process = builder.start();
 
-            // Output 읽기
+            // Output 및 Error 읽기
             StringBuilder output = new StringBuilder();
             try (BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()))) {
                 String line;
@@ -168,41 +183,40 @@ public class SubmissionService {
                 }
             }
 
-            // Error Output 읽기
-            StringBuilder errorOutput = new StringBuilder();
-            try (BufferedReader errorReader = new BufferedReader(new InputStreamReader(process.getErrorStream()))) {
-                String line;
-                while ((line = errorReader.readLine()) != null) {
-                    errorOutput.append(line).append('\n');
-                }
+            // 시간 측정 종료 및 실행 시간 계산
+            long endTime = System.currentTimeMillis();
+            long executionTimeMillis = endTime - startTime;
+            double executionTimeSeconds = executionTimeMillis / 1000.0;
+
+            // 결과 설정
+            executionResult.setOutput(output.toString());
+            executionResult.setExecutionTime(executionTimeMillis);
+
+            // 시간 제한 초과 확인
+            if (executionTimeMillis > problem.getTimeLimit() * 1000) {
+                executionResult.setTimeLimitExceeded(true);
             }
-
-            LOGGER.info("Docker Output:\n" + output.toString());
-            LOGGER.info("Docker Error:\n" + errorOutput.toString());
-
+            LOGGER.info("Total execution time (in seconds): " + executionTimeSeconds + "초");
+            LOGGER.info("Docker Output:" + output);
             process.waitFor();
-
-            return output.toString();
         } catch (Exception e) {
             LOGGER.severe("Error running Docker command: " + e.getMessage());
-            return "";
+            executionResult.setOutput("Error executing code: " + e.getMessage());
         }
+        return executionResult;
     }
 
-
-
-    private SubmissionDto convertToDto(Submission submission) {
-        SubmissionDto dto = new SubmissionDto();
-        dto.setId(submission.getId());
-        dto.setUserId(submission.getUser().getId());
-        dto.setProblemId(submission.getProblem().getId());
-        dto.setCode(submission.getCode());
-        dto.setLanguage(submission.getLanguage());
-        dto.setStatus(submission.getStatus());
-        dto.setResult(submission.getResult());
-        dto.setExecutionTime(submission.getExecutionTime());
-        return dto;
+    private SubmissionDto convertToDto(Submission submission, Long userId) {
+        return new SubmissionDto(
+                submission.getId(),
+                userId, // 사용자 ID 설정
+                submission.getProblem().getId(),
+                submission.getCode(),
+                submission.getLanguage(),
+                submission.getStatus(),
+                submission.getResult(),
+                submission.getExecutionTime()
+        );
     }
 
-    // 필요한 추가 메소드
 }
