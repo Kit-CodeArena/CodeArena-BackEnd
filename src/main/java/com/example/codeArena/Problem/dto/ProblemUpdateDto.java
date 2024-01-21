@@ -1,5 +1,6 @@
 package com.example.codeArena.Problem.dto;
 
+import com.example.codeArena.Problem.domain.ProblemType;
 import com.example.codeArena.Problem.domain.TestCase;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,4 +24,5 @@ public class ProblemUpdateDto {
     private String category;
     private String[] tags;
     private List<TestCase> testCases;
+    private ProblemType type;
 }
