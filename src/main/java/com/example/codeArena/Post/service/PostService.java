@@ -195,6 +195,7 @@ public class PostService {
 
         dto.setComments(commentDtos); // 댓글 목록 설정
         dto.setCommentCount(commentDtos.size()); // 댓글 수 설정
+        dto.setImage(post.getImage());
         return dto;
     }
 
