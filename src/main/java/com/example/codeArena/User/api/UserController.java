@@ -61,7 +61,7 @@ public class UserController {
         }
 
         Optional<User> user = userService.getUserInfo(currentUser.getNickname());
-        return user.map(u -> ResponseEntity.ok(new UserDto(u.getUsername(), u.getNickname(), u.getEmail())))
-                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserDto("", "", "")));
+        return user.map(u -> ResponseEntity.ok(new UserDto(u.getUsername(), u.getNickname(), u.getEmail(), u.getRole())))
+                .orElseGet(() -> ResponseEntity.status(HttpStatus.NOT_FOUND).body(new UserDto("", "", "", null)));
     }
 }
