@@ -1,6 +1,7 @@
 package com.example.codeArena.Problem.repository;
 
 import com.example.codeArena.Problem.domain.Problem;
+import com.example.codeArena.Problem.domain.ProblemType;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 import java.util.List;
@@ -19,5 +20,7 @@ public interface ProblemRepository extends JpaRepository<Problem, Long> {
 
     // 태그로 문제 필터링
     List<Problem> findByTagsContaining(String tag);
+
+    List<Problem> findByType(ProblemType type);
 
 }

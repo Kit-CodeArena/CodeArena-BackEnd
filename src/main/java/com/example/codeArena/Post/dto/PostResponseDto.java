@@ -25,6 +25,7 @@ public class PostResponseDto {
     private List<CommentResponseDto> comments; // 댓글 목록
     private boolean isLikedByCurrentUser;
     private int likes; // 좋아요 수
+    private byte[] image;
 
     public void setIsLikedByCurrentUser(boolean isLikedByCurrentUser) {
         this.isLikedByCurrentUser = isLikedByCurrentUser;    }

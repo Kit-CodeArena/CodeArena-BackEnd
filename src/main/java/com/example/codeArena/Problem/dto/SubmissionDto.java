@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SubmissionDto {
     private Long id;
-    private String userId;
-    private String problemId;
+    private Long userId; // 사용자 ID 추가
+    private Long problemId;
     private String code;
     private String language;
     private SubmissionStatus status;
