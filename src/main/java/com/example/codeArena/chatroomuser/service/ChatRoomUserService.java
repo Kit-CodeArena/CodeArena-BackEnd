@@ -32,4 +32,9 @@ public class ChatRoomUserService {
 
         user.blockMember();
     }
+
+    @Transactional
+    public void delete(Long userId, Long roomId) {
+        chatRoomUserRepository.deleteByUserIdAndChatRoomId(userId, roomId);
+    }
 }

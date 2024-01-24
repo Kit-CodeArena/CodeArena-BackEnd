@@ -15,6 +15,19 @@ spring:
       ddl-auto: update
       database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
 
+  datasource:
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    url: jdbc:mysql://202.31.200.123:80/codeArena
+    username: root
+    password: test1234
+
+  jpa:
+    database: MYSQL
+    show-sql: true
+    hibernate:
+      ddl-auto: update
+      database-platform: org.hibernate.spatial.dialect.mysql.MySQL56InnoDBSpatialDialect
+
 logging:
   level:
     root: INFO

@@ -87,13 +87,27 @@ public class ProposalService {
                 .orElseThrow(()->new CustomException(INVALID_INPUT_VALUE_DTO));
     }
 
+    public ProposalPageResponse getProposalsByLeaderId(Long userId, Pageable pageable) {
+        List<ProposalResponse> responses = proposalRepository.findAllByLeaderId(userId, pageable)
+                .map(proposal -> {
+                            ChatRoom room = chatRoomRepository.findById(proposal.getChatRoomId())
+                                    .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
+
+                            return Optional.of(proposal)
+                                    .map(p -> new ProposalResponse(p, room))
+                                    .orElseThrow(()->new CustomException(INVALID_INPUT_VALUE_DTO));
+                        }
+                )
+                .toList();
+
+        return new ProposalPageResponse(responses);
+    }
+
     public ProposalPageResponse getProposalsByMemberId(Long userId, Pageable pageable) {
         List<ProposalResponse> responses = proposalRepository.findAllByUserIdOrderByCreatedAtDesc(userId, pageable)
                 .map(proposal -> {
                     ChatRoom room = chatRoomRepository.findById(proposal.getChatRoomId())
                             .orElseThrow(() -> new CustomException(ErrorCode.CHAT_ROOM_NOT_FOUND));
-
-                    String roomName = room.getName();
 
                     return Optional.of(proposal)
                             .map(p -> new ProposalResponse(p, room))

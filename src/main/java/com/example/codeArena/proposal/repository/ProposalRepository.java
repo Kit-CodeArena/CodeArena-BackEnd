@@ -10,4 +10,6 @@ public interface ProposalRepository extends JpaRepository<Proposal, Long> {
     Optional<Proposal> findProposalsByUserIdAndChatRoomId(Long userId, Long roomId);
 
     Page<Proposal> findAllByUserIdOrderByCreatedAtDesc(Long userId, Pageable pageable);
+
+    Page<Proposal> findAllByLeaderId(Long userId, Pageable pageable);
 }
