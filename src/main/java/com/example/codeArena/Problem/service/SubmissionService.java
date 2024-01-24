@@ -92,12 +92,23 @@ public class SubmissionService {
 
         if (allTestsPassed) {
             submission.setStatus(Submission.SubmissionStatus.ACCEPTED);
+            updateProblemStatistics(problem, true); // 정답 처리
         } else {
             submission.setStatus(Submission.SubmissionStatus.REJECTED);
+            updateProblemStatistics(problem, false); // 오답 처리
         }
 
         Submission savedSubmission = submissionRepository.save(submission);
         return convertToDto(savedSubmission, currentUserId);
+    }
+
+    private void updateProblemStatistics(Problem problem, boolean isCorrect) {
+        problem.setTotalSubmissions(problem.getTotalSubmissions() + 1);
+        if (isCorrect) {
+            problem.setCorrectSubmissions(problem.getCorrectSubmissions() + 1);
+        }
+        problem.setAccuracy((double) problem.getCorrectSubmissions() / problem.getTotalSubmissions() * 100);
+        problemRepository.save(problem);
     }
 
     private String createFileWithContent(String fileName, String content) {
