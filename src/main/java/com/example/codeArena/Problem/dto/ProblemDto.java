@@ -1,5 +1,6 @@
 package com.example.codeArena.Problem.dto;
 
+import com.example.codeArena.Problem.domain.ProblemType;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,4 +24,5 @@ public class ProblemDto {
     private Double accuracy;
     private String category;
     private String[] tags;
+    private ProblemType type;
 }

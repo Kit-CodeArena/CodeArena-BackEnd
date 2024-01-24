@@ -1,14 +1,13 @@
 package com.example.codeArena.Problem.service;
 
+import com.example.codeArena.Problem.domain.Problem;
+import com.example.codeArena.Problem.domain.ProblemType;
 import com.example.codeArena.Problem.domain.TestCase;
 import com.example.codeArena.Problem.dto.ProblemCreateDto;
 import com.example.codeArena.Problem.dto.ProblemDto;
 import com.example.codeArena.Problem.dto.ProblemUpdateDto;
-import com.example.codeArena.Problem.domain.Problem;
 import com.example.codeArena.Problem.repository.ProblemRepository;
 import com.example.codeArena.exception.CustomException;
-import static com.example.codeArena.exception.CustomException.ErrorCode;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -17,17 +16,22 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import static com.example.codeArena.exception.CustomException.ErrorCode;
+
 @Service
 public class ProblemService {
 
-    @Autowired
-    private ProblemRepository problemRepository;
+    private final ProblemRepository problemRepository;
+
+    public ProblemService(ProblemRepository problemRepository) {
+        this.problemRepository = problemRepository;
+    }
 
     // 문제 생성
     public ProblemDto createProblem(ProblemCreateDto createDto) {
         Problem problem = new Problem();
         updateProblemFields(problem, createDto);
-        // 테스트 케이스 추가
+        problem.setType(createDto.getType());
         for (TestCase testCase : createDto.getTestCases()) {
             testCase.setProblem(problem);
         }
@@ -50,6 +54,20 @@ public class ProblemService {
                 .collect(Collectors.toList());
     }
 
+    // 대회용 문제 조회
+    public List<ProblemDto> getContestProblems() {
+        return problemRepository.findByType(ProblemType.CONTEST).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
+    // 연습 문제 조회
+    public List<ProblemDto> getPracticeProblems() {
+        return problemRepository.findByType(ProblemType.PRACTICE).stream()
+                .map(this::convertToDto)
+                .collect(Collectors.toList());
+    }
+
     // 특정 문제 조회
     public Optional<ProblemDto> getProblemById(Long id) {
         return problemRepository.findById(id)
@@ -61,6 +79,7 @@ public class ProblemService {
         return problemRepository.findById(id)
                 .map(problem -> {
                     updateProblemFields(problem, updateDto);
+                    problem.setType(updateDto.getType());
                     return convertToDto(problemRepository.save(problem));
                 });
     }
@@ -101,7 +120,8 @@ public class ProblemService {
                 problem.getSampleOutput(), problem.getTimeLimit(),
                 problem.getMemoryLimit(), problem.getTotalSubmissions(),
                 problem.getCorrectSubmissions(), problem.getAccuracy(),
-                problem.getCategory(), problem.getTags().toArray(new String[0]));
+                problem.getCategory(), problem.getTags().toArray(new String[0]),
+                problem.getType());
     }
 
     // DTO를 기반으로 문제 필드 업데이트
@@ -113,6 +133,7 @@ public class ProblemService {
                     createDto.getSampleOutput(), createDto.getTimeLimit(),
                     createDto.getMemoryLimit(), createDto.getCategory(),
                     new ArrayList<>(Arrays.asList(createDto.getTags())));
+            problem.setType(createDto.getType());
         } else if (dto instanceof ProblemUpdateDto updateDto) {
             setProblemFieldsFromDto(problem, updateDto.getTitle(), updateDto.getDescription(),
                     updateDto.getDifficulty(), updateDto.getInputFormat(),
@@ -120,6 +141,7 @@ public class ProblemService {
                     updateDto.getSampleOutput(), updateDto.getTimeLimit(),
                     updateDto.getMemoryLimit(), updateDto.getCategory(),
                     new ArrayList<>(Arrays.asList(updateDto.getTags())));
+            problem.setType(updateDto.getType());
         }
     }
 
